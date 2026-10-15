@@ -271,6 +271,35 @@ textarea:focus,input:focus,select:focus{outline:none;border-color:var(--accent);
 .consent input{width:20px;height:20px;margin-top:2px;flex:none;accent-color:var(--accent)}
 .notice{border-radius:12px;padding:12px 14px;background:var(--accent-soft);font-size:.88rem}
 .notice.warn{background:color-mix(in srgb,var(--tape) 22%,var(--surface))}
+.ways{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media (max-width:860px){.ways{grid-template-columns:1fr}}
+.way{position:relative;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:22px 20px 20px;display:flex;flex-direction:column;gap:10px;cursor:pointer;transition:border-color .2s,transform .2s}
+.way:hover{border-color:var(--accent);transform:translateY(-2px)}
+.way.rec{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.way b{font-size:1.12rem}
+.way .go{margin-top:auto;padding-top:6px;font-weight:700;color:var(--accent)}
+.wicon{width:46px;height:46px;border-radius:12px;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center}
+.wicon svg{width:26px;height:26px}
+.badge2{align-self:flex-start;font-family:var(--mono);font-size:.68rem;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:5px;background:var(--accent);color:var(--accent-ink)}
+.badge2.alt{background:var(--sunk);color:var(--muted)}
+.hsel{width:auto;min-width:72px}
+.live{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:24px;align-items:start}
+@media (max-width:860px){.live{grid-template-columns:1fr;gap:14px}.livecam{max-height:68vh}}
+.livecam video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.livecam video.mirror{transform:scaleX(-1)}
+.livecam .guide{z-index:1}.livecam .hud,.livecam .count{z-index:2}
+.livecam .count{pointer-events:none}
+.flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:3}
+.flash.on{animation:fl .5s ease-out}
+@keyframes fl{0%{opacity:.85}100%{opacity:0}}
+.thumbs{display:flex;gap:10px}
+.th{width:84px;aspect-ratio:3/4;border-radius:10px;border:1.5px dashed var(--line);display:grid;place-items:end center;position:relative;overflow:hidden;font-size:.74rem;padding:4px;color:var(--muted)}
+.th.ok{border-style:solid;border-color:var(--accent);color:var(--accent);font-weight:700}
+.th img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.th span{position:relative;background:var(--surface);border-radius:5px;padding:1px 6px}
+.fixes{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.fixes div{border:1px solid var(--line);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:4px;background:var(--paper)}
+@media (max-width:700px){.fixes{grid-template-columns:1fr}}
 .proc{display:flex;flex-direction:column;gap:12px;max-width:440px;margin:40px auto;text-align:center;align-items:center}
 .proc ol{list-style:none;padding:0;margin:8px 0 0;display:flex;flex-direction:column;gap:8px;text-align:left;width:100%}
 .proc li{display:flex;gap:10px;align-items:center;color:var(--muted)}
@@ -759,7 +788,7 @@ const S={
  profiles:store.get('profiles2',seedProfiles()),active:store.get('active','p1'),
  orders:store.get('orders2',seedOrders()),designs:store.get('designs',[]),cart:store.get('cart',[]),
  saved:store.get('saved',['ivory-silk-wedding-kurta']),recent:store.get('recent',['office-oxford-shirt','navy-peak-lapel-blazer']),
- m:{stage:'intro',step:0,consent:false,consent2:false,keep:false,profileId:null,height:'',unit:'cm',caps:[null,null,null],busy:false,proc:0},
+ m:{stage:'choose',step:0,keep:false,profileId:null,unit:'ft',ft:5,inch:8,cm:173,hIn:68,caps:[null,null],proc:0,voice:true,paused:false,fail:null,shape:'Average',size:null,kg:''},
  reviewId:null,fb:{},view3d:{angle:0,auto:false},filter:'trend',dtab:'designs',staff:false,adminSel:null,pendingDel:null,lastOrder:null,copyText:null
 };
 function persist(){store.set('draft',S.draft);store.set('profiles2',S.profiles);store.set('active',S.active);store.set('orders2',S.orders);store.set('designs',S.designs);store.set('cart',S.cart);store.set('saved',S.saved);store.set('recent',S.recent)}
@@ -961,48 +990,88 @@ function figure(view){
   :`<circle cx="100" cy="38" r="18"/><path d="M76,62 Q100,56 124,62 L132,72 Q138,124 128,172 L130,202 L70,202 L72,172 Q62,124 68,72 Z"/><path d="M70,74 L50,170 L45,194 M130,74 L150,170 L155,194" stroke-width="12" stroke-linecap="round"/><path d="M86,200 L74,342 M114,200 L126,342" stroke-width="17" stroke-linecap="round"/>`;
  return`<svg viewBox="0 0 200 360" aria-hidden="true"><g fill="rgba(125,195,167,.12)" stroke="#7DC3A7" stroke-width="2" stroke-dasharray="6 5">${g}</g>${!side?'<path d="M64,354 L136,354" stroke="#E4B12B" stroke-width="2"/><text x="100" y="352" fill="#E4B12B" font-family="DM Mono,monospace" font-size="8" text-anchor="middle" dy="-5">feet shoulder-width</text>':''}</svg>`;
 }
-const CAP=[
- {k:'front',t:'Front',instr:['Stand in front of your camera.','Keep your feet shoulder-width apart.','Keep your arms slightly away from your body.','Make sure your entire body is visible.']},
- {k:'side',t:'Side',instr:['Turn 90° to your right.','Let your arms rest naturally at your sides.','Stand tall and look straight ahead.','Keep your full profile inside the frame.']},
- {k:'back',t:'Back / 360°',instr:['Turn to face away from the camera.','Feet shoulder-width apart, arms slightly out.','For a 360° scan, turn slowly in place over 10 seconds.','Stay inside the frame the whole time.']}];
+const POSES=[
+ {k:'front',t:'Face the camera',n:'Front',instr:'Feet apart, arms slightly away from your body. Fit your whole body inside the outline.',say:'Step back until your whole body fits in the outline. Feet apart, arms slightly out. Photo in eight seconds.'},
+ {k:'side',t:'Turn to your right',n:'Side',instr:'Stand sideways, arms relaxed at your sides, look straight ahead.',say:'Great. Now turn to your right side and stand tall. Photo in five seconds.'}];
+function heightField(){const M=S.m;return`<div class="stack" style="gap:8px"><span class="glabel">Height</span><div class="row">${M.unit==='ft'
+ ?`<select id="h-ft" aria-label="Feet" class="hsel">${[4,5,6,7].map(f=>`<option ${f===M.ft?'selected':''}>${f}</option>`).join('')}</select><span>ft</span><select id="h-in" aria-label="Inches" class="hsel">${[...Array(12).keys()].map(i=>`<option ${i===M.inch?'selected':''}>${i}</option>`).join('')}</select><span>in</span>`
+ :`<input type="number" id="h-cm" inputmode="numeric" value="${M.cm||''}" placeholder="e.g. 172" style="max-width:120px"><span>cm</span>`}
+ <div class="chips">${chip('m-unit','ft',M.unit)}${chip('m-unit','cm',M.unit)}</div></div></div>`}
+function readHeight(){const M=S.m;if(M.unit==='ft'){const f=$('#h-ft'),i=$('#h-in');if(f){M.ft=+f.value;M.inch=+i.value}return M.ft*12+M.inch}const c=$('#h-cm');if(c)M.cm=+c.value;return M.cm/2.54}
+function whoField(){const M=S.m;return`<label class="stack" style="gap:8px"><span class="glabel">Measuring for</span><select id="m-prof" class="hsel" style="max-width:280px">${S.profiles.map(p=>`<option value="${p.id}" ${p.id===M.profileId?'selected':''}>${esc(p.name)}</option>`).join('')}<option value="__new">+ Someone new…</option></select></label><input type="text" id="np-name" placeholder="Name, e.g. Son" hidden style="max-width:280px">`}
+function prefillHeight(){const M=S.m,p=prof(M.profileId);if(p&&p.m){const h=p.m.height.v;M.ft=Math.floor(h/12);M.inch=Math.round(h%12);if(M.inch===12){M.ft++;M.inch=0}M.cm=Math.round(h*2.54)}}
+function readWho(){const M=S.m,sel=$('#m-prof'),nm=$('#np-name');
+ if(sel&&sel.value==='__new'){const v=(nm&&nm.value.trim())||'';if(!v){toast('Type the person’s name');return false}const p={id:'p'+Date.now(),name:v,rel:'Family',fit:'Tailored',sizes:'',m:null,photos:false,updated:new Date().toISOString(),adj:{}};S.profiles.push(p);M.profileId=p.id;api.call('POST','/v1/profiles',v)}
+ else if(sel)M.profileId=sel.value;return true}
+function heightOk(h){if(!(h>=48&&h<=90)){toast('Please check the height');return false}return true}
+const CAMFAIL={
+ preview:['The camera can’t open inside this preview','Open the live site on your phone to scan, or use one of the options below. They work everywhere.'],
+ denied:['Camera permission is blocked','Allow the camera for this site, then tap Try again.'],
+ nocam:['No camera found on this device','Use your phone instead, or pick an option below.'],
+ busy:['The camera is being used by another app','Close the other app (video call, camera), then tap Try again.'],
+ insecure:['The camera needs a secure page','Open the site with https:// and try again.'],
+ nosupport:['This browser can’t open the camera','Try Chrome or Safari, or pick an option below.'],
+ other:['The camera didn’t start','Tap Try again, or pick an option below.']};
 V.measure=()=>{
  const M=S.m;let body='';
- if(M.stage==='intro'){
+ if(!M.profileId)M.profileId=S.active;
+ if(M.stage==='choose'){
+  body=`<div class="stack" style="gap:20px"><div class="ways">
+   <button class="way rec" data-act="m-pick" data-val="scan"><span class="badge2">Most accurate · 1 min</span><span class="wicon">${ICON_CAM}</span><b>Scan with your phone camera</b><span class="muted">Prop your phone up, step back, and follow the voice prompts. It takes two photos automatically: front and side.</span><span class="go">Start scan →</span></button>
+   <button class="way" data-act="m-pick" data-val="quick"><span class="badge2 alt">Fastest · 30 sec</span><span class="wicon">${ICON_BOLT}</span><b>Quick estimate</b><span class="muted">Answer four questions: height, weight, body shape and your usual size. No camera needed.</span><span class="go">Answer 4 questions →</span></button>
+   <button class="way" data-act="m-manual"><span class="badge2 alt">Have a tape?</span><span class="wicon">${ICON_TAPE}</span><b>Enter my measurements</b><span class="muted">Type in your numbers, with a how-to tip for each one.</span><span class="go">Type them in →</span></button>
+  </div><p class="small muted">Whichever you choose, you’ll review every number before anything is made, and the 100% Fit Guarantee covers the result.</p></div>`;
+ }else if(M.stage==='scan'){
   body=`<div class="measure-grid"><div class="panel stack" style="gap:18px">
-   <h3>Before you start</h3>
-   <ul class="checklist"><li>Wear fitted clothing, or tuck in loose layers.</li><li>Prop your phone at waist height, about 2.5 m away, or ask someone to hold it.</li><li>Use a bright room with a plain wall behind you.</li><li>It takes about two minutes: front, side and back.</li></ul>
-   <label class="consent"><input type="checkbox" id="c1" data-act="consent" ${M.consent?'checked':''}><span><b>I agree to body capture.</b><br><span class="small muted">The camera captures images of your body to calculate measurements. They are encrypted in transit and processed securely.</span></span></label>
-   <label class="consent"><input type="checkbox" id="c2" data-act="consent2" ${M.keep?'checked':''}><span><b>Keep my capture photos</b> <span class="muted">(optional)</span><br><span class="small muted">Off by default. When off, photos are deleted as soon as measurements are computed and only the numbers are saved.</span></span></label>
-   <div class="row"><button class="btn btn-primary btn-lg" data-act="m-start" ${M.consent?'':'disabled'}>Start measuring</button><button class="linkbtn" data-act="m-manual">Enter measurements manually</button></div>
+   ${whoField()}${heightField()}
+   <div class="stack" style="gap:8px"><span class="glabel">Before you tap start</span>
+   <ul class="checklist"><li>Lean your phone against a wall or bottle at waist height.</li><li>Stand about 2–3 steps back in a bright room.</li><li>Wear fitted clothes. You’ll hear what to do.</li></ul></div>
+   <button class="btn btn-primary btn-lg" data-act="m-go">Start camera</button>
+   <p class="small muted">By tapping Start camera you agree to body capture for measurement. Photos are deleted right after your numbers are calculated. <label style="display:inline-flex;gap:6px;align-items:center;cursor:pointer"><input type="checkbox" id="keep" data-act="consent2" ${M.keep?'checked':''} style="accent-color:var(--accent)"> Keep my photos instead</label></p>
+   <div class="row"><button class="linkbtn small" data-act="m-back">← Other ways to measure</button></div>
   </div>
   <div class="cam" aria-hidden="true"><div class="guide">${figure('front')}</div><span class="corner c1"></span><span class="corner c2"></span><span class="corner c3"></span><span class="corner c4"></span></div></div>`;
- }else if(M.stage==='setup'){
-  body=`<div class="panel stack" style="gap:18px;max-width:640px">
-   <h3>Who are we measuring?</h3>
-   <div class="chips">${S.profiles.map(p=>chip('m-prof',p.name,prof(M.profileId)?.name)).join('')}<button class="chip" data-act="m-newprof">+ New profile</button></div>
-   <div id="newprof" hidden><input type="text" id="np-name" placeholder="Profile name, e.g. Son"></div>
-   <div class="stack"><span class="glabel">Height</span><div class="row"><input type="number" id="m-h" inputmode="decimal" value="${esc(M.height)}" placeholder="${M.unit==='cm'?'e.g. 175':'e.g. 69'}" style="max-width:160px"><div class="chips">${chip('m-unit','cm',M.unit)}${chip('m-unit','in',M.unit)}</div></div><p class="small muted">Your height is the scale reference that turns pixels into inches, so enter it as accurately as you can.</p></div>
-   <div class="row"><button class="btn btn-primary" data-act="m-go">Continue to capture</button><button class="btn btn-ghost" data-act="m-back">Back</button></div></div>`;
- }else if(M.stage==='capture'){
-  const st=CAP[M.step];
-  body=`<div class="measure-grid">
-   <div class="stack"><div class="cam">${M.caps[M.step]&&M.caps[M.step]!=='sim'?`<img class="shot" src="${M.caps[M.step]}" alt="">`:''}<div class="guide">${figure(st.k==='side'?'side':'front')}</div><span class="corner c1"></span><span class="corner c2"></span><span class="corner c3"></span><span class="corner c4"></span>
-    <div class="hud"><span>${st.t.toUpperCase()} · ${M.step+1}/3</span><span>${M.busy?'HOLD STILL':M.caps[M.step]?'CAPTURED ✓':'FULL BODY ✓ · LIGHT OK'}</span></div>
-    ${M.busy?`<div class="scanline"></div><div class="count" id="count">3</div>`:''}</div></div>
-   <div class="stack" style="gap:16px">
-    <div class="capsteps">${CAP.map((c,i)=>`<button data-act="m-step" data-i="${i}" class="${i===M.step?'cur':''}"><b>${c.t}</b>${M.caps[i]?'<span class="ok">Captured</span>':'<span class="muted">Pending</span>'}</button>`).join('')}</div>
-    <div class="panel stack" style="gap:12px">${st.instr.map((t,i)=>`<p class="${i===0?'instr':''}">${esc(t)}</p>`).join('')}</div>
-    <div class="row"><button class="btn btn-primary btn-lg" data-act="m-cap" ${M.busy?'disabled':''}>${M.caps[M.step]?'Retake':'Capture '+st.t.split(' ')[0].toLowerCase()}</button><label class="btn btn-ghost" style="position:relative">Upload a photo<input type="file" accept="image/*" data-upload="cap" style="position:absolute;inset:0;opacity:0;cursor:pointer" aria-label="Upload a photo for this view"></label></div>
-    <p class="notice small">Camera access isn't available in this preview, so capture is simulated. On the live site and app this step uses your phone camera with live pose guidance.</p>
-    ${M.caps.every(Boolean)?`<button class="btn btn-tape btn-lg" data-act="m-process">Calculate my measurements</button>`:''}
+ }else if(M.stage==='live'){
+  const P=POSES[M.step];
+  body=`<div class="live">
+   <div class="cam livecam"><video id="camv" playsinline muted autoplay></video><div class="guide" id="guide">${figure(P.k==='side'?'side':'front')}</div><span class="corner c1"></span><span class="corner c2"></span><span class="corner c3"></span><span class="corner c4"></span>
+    <div class="hud"><span id="pose-n">${M.step+1} OF ${POSES.length} · ${P.n.toUpperCase()}</span><span id="livestat">OPENING CAMERA…</span></div>
+    <div class="count" id="cd"></div><div class="flash" id="flash"></div></div>
+   <div class="stack livepanel" style="gap:14px">
+    <p class="instr" id="pose-t">${P.t}</p><p class="muted" id="pose-i">${P.instr}</p>
+    <div class="row"><button class="btn btn-ghost" data-act="m-pause" id="btn-pause">Pause</button><button class="btn btn-ghost" data-act="m-redo">Redo this photo</button><button class="btn btn-ghost" data-act="m-switch">Switch camera</button><button class="btn btn-ghost" data-act="m-voice" id="btn-voice">${M.voice?'Voice on':'Voice off'}</button></div>
+    <div class="thumbs" id="thumbs">${thumbsHTML()}</div>
+    <button class="linkbtn small" data-act="m-cancel" style="align-self:flex-start">Cancel scan</button>
    </div></div>`;
+ }else if(M.stage==='camfail'){
+  const [h,t]=CAMFAIL[M.fail]||CAMFAIL.other;
+  const fix=M.fail==='denied'?`<div class="fixes"><div><b>Android · Chrome</b><span class="small muted">Tap the icon left of the web address → Permissions → Camera → Allow.</span></div><div><b>iPhone · Safari</b><span class="small muted">Tap “aA” in the address bar → Website Settings → Camera → Allow.</span></div><div><b>Still blocked?</b><span class="small muted">Phone Settings → Apps → your browser → Permissions → Camera → Allow.</span></div></div>`:'';
+  body=`<div class="panel stack" style="gap:16px;max-width:720px"><h3>${h}</h3><p class="muted">${t}</p>${fix}
+   <div class="row">${M.fail!=='preview'&&M.fail!=='nocam'&&M.fail!=='nosupport'?'<button class="btn btn-primary" data-act="m-retry">Try again</button>':''}<button class="btn btn-ghost" data-act="m-pick" data-val="upload">Upload 2 photos instead</button><button class="btn btn-ghost" data-act="m-pick" data-val="quick">Quick estimate (30 sec)</button><button class="btn btn-ghost" data-act="m-manual">Enter measurements</button></div></div>`;
+ }else if(M.stage==='upload'){
+  body=`<div class="panel stack" style="gap:16px;max-width:720px"><h3>Upload two full-length photos</h3><p class="muted">Ask someone to take them, or use your phone’s timer. Fitted clothes, plain wall, whole body in the photo.</p>
+   ${whoField()}${heightField()}
+   <div class="uploads">${POSES.map((P,i)=>`<label class="drop">${M.caps[i]&&M.caps[i]!=='sim'?`<img src="${M.caps[i]}" alt="">`:''}<b>${P.n} photo</b><span class="muted small">${M.caps[i]?'Tap to replace':i?'Standing sideways':'Facing the camera'}</span><input type="file" accept="image/*" capture="environment" data-upload="cap${i}" aria-label="${P.n} photo"></label>`).join('')}</div>
+   <div class="row"><button class="btn btn-primary btn-lg" data-act="m-upload-go" ${M.caps[0]&&M.caps[1]?'':'disabled'}>Calculate my measurements</button><button class="linkbtn small" data-act="m-back">← Other ways</button></div></div>`;
+ }else if(M.stage==='quick'){
+  body=`<div class="panel stack" style="gap:20px;max-width:720px">
+   ${whoField()}${heightField()}
+   <label class="stack" style="gap:8px"><span class="glabel">Weight</span><div class="row"><input type="number" id="q-kg" inputmode="numeric" value="${esc(M.kg)}" placeholder="e.g. 72" style="max-width:120px"><span>kg</span></div></label>
+   <div class="stack" style="gap:8px"><span class="glabel">Body shape</span><div class="chips">${['Slim','Average','Athletic','Fuller middle'].map(v=>`<button class="chip" data-act="m-shape" data-val="${v}" aria-pressed="${M.shape===v}">${v}</button>`).join('')}</div></div>
+   <div class="stack" style="gap:8px"><span class="glabel">Usual shirt / top size</span><div class="chips">${['S','M','L','XL','XXL','Not sure'].map(v=>`<button class="chip" data-act="m-size" data-val="${v}" aria-pressed="${M.size===v}">${v}</button>`).join('')}</div></div>
+   <div class="row"><button class="btn btn-primary btn-lg" data-act="m-quick-go">Get my measurements</button><button class="linkbtn small" data-act="m-back">← Other ways</button></div>
+   <p class="small muted">This gives a good starting point. On the next screen, checking 3–4 flagged numbers with a tape locks a perfect fit.</p></div>`;
  }else{
-  const items=['Detecting body keypoints','Estimating body contour','Computing 18 measurements','Scoring confidence',M.keep?'Saving encrypted photos':'Deleting capture photos'];
+  const items=['Finding your outline','Matching your height to the photos','Computing 18 measurements','Scoring confidence',M.keep?'Saving encrypted photos':'Deleting your photos'];
   body=`<div class="proc"><div class="spinner"></div><h3>Calculating your measurements</h3><ol>${items.map((t,i)=>`<li class="${i<M.proc?'on':''}"><span class="dot"></span>${t}</li>`).join('')}</ol></div>`;
  }
- return`<div class="wrap page">${stepper('measure')}<div class="page-head"><p class="eyebrow">Step 3 · 360° digital measurement</p><h2>Capture your measurements</h2><p>Guided capture from your phone. You'll review every number before it's used.</p></div>${body}</div>`;
+ const sub={choose:'Pick the way that suits you. All three lead to the same review screen.',scan:'Two photos, taken automatically. You’ll hear each step.',live:'Hands-free: the photo is taken for you after the countdown.',quick:'Four quick answers, no camera.',upload:'Front and side photos from your gallery.',camfail:'No problem, there are other ways to measure.'}[M.stage]||'';
+ return`<div class="wrap page">${M.stage==='live'?'':stepper('measure')}<div class="page-head"><p class="eyebrow">Step 3 · Measurements</p><h2>${M.stage==='live'?'Scanning':'How would you like to measure?'}</h2><p>${sub}</p></div>${body}</div>`;
 };
-
+const ICON_CAM='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><circle cx="12" cy="7" r="1.6"/><path d="M12 10v5M12 15l-2 4M12 15l2 4M12 11.5l-3 2.5M12 11.5l3 2.5"/></svg>';
+const ICON_BOLT='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg>';
+const ICON_TAPE='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="10" cy="11" r="7"/><circle cx="10" cy="11" r="2"/><path d="M17 11h5v5h-5"/><path d="M19 11v2M21 11v2"/></svg>';
+function thumbsHTML(){return POSES.map((P,i)=>{const c=S.m.caps[i];return`<div class="th ${c?'ok':''}">${c&&c!=='sim'?`<img src="${c}" alt="">`:''}<span>${c?'✓ ':''}${P.n}</span></div>`}).join('')}
 V.review=()=>{
  const p=prof(S.reviewId)||activeProfile();
  if(!p||!p.m)return`<div class="wrap page">${stepper('review')}<div class="empty"><b>No measurements yet for ${esc(p?p.name:'this profile')}</b><p>Capture them with your phone or enter them manually.</p><button class="btn btn-primary" data-go="measure">Start measuring</button></div></div>`;
@@ -1174,33 +1243,90 @@ function render(){
  $('#view').innerHTML=V[v]();
  document.querySelectorAll('.links button[data-go]').forEach(b=>{if(b.dataset.go===v)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current')});
  const cc=$('#cartCount');cc.textContent=S.cart.length;cc.hidden=!S.cart.length;
+ if(v==='measure'&&S.m.stage==='live'&&!CAM.stream)setTimeout(startCamera,0);
  if(v==='preview'){const r=$('#angle');if(r)r.addEventListener('input',e=>setAngle(+e.target.value))}
 }
-function go(v,keep){S.view=v;$('#drawer').hidden=true;if(v!=='preview')stopSpin();try{history.replaceState(null,'','#'+v)}catch(e){}render();if(!keep)window.scrollTo({top:0})}
+function go(v,keep){if(v!=='measure'||S.m.stage!=='live')stopCamera();if(S.view==='measure'&&v!=='measure'&&S.m.stage==='live')S.m.stage='scan';S.view=v;$('#drawer').hidden=true;if(v!=='preview')stopSpin();try{history.replaceState(null,'','#'+v)}catch(e){}render();if(!keep)window.scrollTo({top:0})}
 function setAngle(a){S.view3d.angle=a;const b=$('#rotbox');if(b)b.innerHTML=rotSVG(a);const l=$('#angval');if(l)l.textContent=a+'°';const r=$('#angle');if(r&&+r.value!==a)r.value=a}
 function stopSpin(){clearInterval(spinTimer);spinTimer=null;S.view3d.auto=false}
 function toast(t){const el=$('#toast');el.textContent=t;el.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>el.hidden=true,2600)}
 function setDraft(s,keepPrompt){S.draft=normalize(s);S.variation=0;persist();if(!keepPrompt)S.understood=[]}
 
-function capture(){
- const M=S.m;M.busy=true;render();let n=3;
- const t=setInterval(()=>{n--;const c=$('#count');if(c)c.textContent=n||'✓';if(n<=0){clearInterval(t);setTimeout(()=>{M.busy=false;M.caps[M.step]=M.caps[M.step]||'sim';api.call('POST','/v1/measurement-sessions/{id}/captures',CAP[M.step].t+' frame');const nx=M.caps.findIndex(x=>!x);if(nx>=0)M.step=nx;render()},450)}},700);
+/* ---------------- live camera: hands-free two-photo scan ---------------- */
+const CAM={stream:null,timer:null,facing:'user'};
+function say(t){if(!S.m.voice)return;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='en-IN';u.rate=1;speechSynthesis.speak(u)}catch(e){}}
+function stopCamera(){clearInterval(CAM.timer);CAM.timer=null;try{speechSynthesis.cancel()}catch(e){}if(CAM.stream){CAM.stream.getTracks().forEach(t=>t.stop());CAM.stream=null}}
+function camFail(kind){stopCamera();S.m.stage='camfail';S.m.fail=kind;api.call('POST','/v1/measurement-sessions','camera failed: '+kind);render()}
+async function startCamera(){
+ const st=()=>$('#livestat');
+ const framed=(()=>{try{return window.self!==window.top}catch(e){return true}})();
+ if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia)return camFail(framed?'preview':'nosupport');
+ if(!window.isSecureContext)return camFail('insecure');
+ stopCamera();
+ try{
+  CAM.stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:CAM.facing,width:{ideal:1080},height:{ideal:1440}},audio:false});
+ }catch(err){const n=err&&err.name;
+  if(framed&&(n==='NotAllowedError'||n==='SecurityError'))return camFail('preview');
+  return camFail(n==='NotAllowedError'||n==='SecurityError'?'denied':n==='NotFoundError'||n==='OverconstrainedError'?'nocam':n==='NotReadableError'||n==='AbortError'?'busy':'other')}
+ const v=$('#camv');if(!v||S.m.stage!=='live'){stopCamera();return}
+ v.srcObject=CAM.stream;v.classList.toggle('mirror',CAM.facing==='user');
+ try{await v.play()}catch(e){}
+ if(st())st().textContent='CAMERA ON';
+ api.call('POST','/v1/measurement-sessions','camera on, keep_images='+S.m.keep);
+ runPose();
+}
+function setLive(){const M=S.m,P=POSES[M.step];
+ const set=(id,t)=>{const el=$('#'+id);if(el)el.textContent=t};
+ set('pose-t',P.t);set('pose-i',P.instr);set('pose-n',`${M.step+1} OF ${POSES.length} · ${P.n.toUpperCase()}`);
+ const g=$('#guide');if(g)g.innerHTML=figure(P.k==='side'?'side':'front');const th=$('#thumbs');if(th)th.innerHTML=thumbsHTML()}
+function runPose(){
+ const M=S.m;M.paused=false;const bp=$('#btn-pause');if(bp)bp.textContent='Pause';
+ setLive();say(POSES[M.step].say);
+ let n=M.step===0?8:5;const cd=$('#cd'),st=$('#livestat');
+ const show=()=>{if(cd)cd.textContent=n;if(st)st.textContent=n<=3?'HOLD STILL':'GET INTO POSITION'};show();
+ clearInterval(CAM.timer);
+ CAM.timer=setInterval(()=>{if(M.paused)return;n--;if(n>0){show();if(n<=3)try{navigator.vibrate&&navigator.vibrate(30)}catch(e){};return}
+  clearInterval(CAM.timer);if(cd)cd.textContent='';snap()},1000);
+}
+function snap(){
+ const M=S.m,v=$('#camv');let data='sim';
+ try{const w=v.videoWidth,h=v.videoHeight;if(w&&h){const sc=Math.min(1,900/Math.max(w,h)),c=document.createElement('canvas');c.width=Math.round(w*sc);c.height=Math.round(h*sc);const x=c.getContext('2d');if(CAM.facing==='user'){x.translate(c.width,0);x.scale(-1,1)}x.drawImage(v,0,0,c.width,c.height);data=c.toDataURL('image/jpeg',.72)}}catch(e){}
+ M.caps[M.step]=data;const f=$('#flash');if(f){f.classList.remove('on');void f.offsetWidth;f.classList.add('on')}
+ try{navigator.vibrate&&navigator.vibrate(90)}catch(e){}
+ api.call('POST','/v1/measurement-sessions/{id}/captures',POSES[M.step].n+' photo');
+ const th=$('#thumbs');if(th)th.innerHTML=thumbsHTML();
+ if(M.step<POSES.length-1){M.step++;setTimeout(runPose,900)}
+ else{say('All done. Calculating your measurements.');setTimeout(()=>{stopCamera();processScan()},800)}
+}
+function estimateM(hIn,kg,shape,size,seed){
+ const m=genM(hIn,seed);const bmi=kg>0?kg/Math.pow(hIn*.0254,2):22.5;
+ const f=Math.max(.84,Math.min(1.34,1+(bmi-22.5)*.022));
+ const G=['chest','upperChest','waist','abdomen','hip','neck','bicep','wrist','trouserWaist','thigh','knee','calf'];
+ G.forEach(k=>m[k].v*=f);
+ const mul=(ks,x)=>ks.forEach(k=>m[k].v*=x);
+ if(shape==='Athletic'){mul(['chest','upperChest','shoulder','bicep'],1.035);mul(['waist','abdomen','trouserWaist'],.96)}
+ if(shape==='Slim')mul(G,.97);
+ if(shape==='Fuller middle')mul(['waist','abdomen','trouserWaist'],1.07);
+ const T={S:37.5,M:40,L:42.5,XL:45,XXL:47.5}[size];
+ if(T){const ratio=(m.chest.v*.4+T*.6)/m.chest.v;mul(['chest','upperChest'],ratio)}
+ Object.entries(m).forEach(([k,x])=>{x.v=Math.round(x.v*10)/10;if(k!=='height'){x.c=G.includes(k)?'Medium':'High';x.u=x.c!=='High'}});
+ ['neck','calf','wrist'].forEach(k=>{m[k].c='Low';m[k].u=true});
+ return m;
 }
 function processScan(){
  const M=S.m;M.stage='processing';M.proc=0;render();
  const t=setInterval(()=>{M.proc++;render();if(M.proc>=5){clearInterval(t);
-  const p=prof(M.profileId);const h=M.unit==='cm'?parseFloat(M.height)/2.54:parseFloat(M.height);
+  const p=prof(M.profileId)||activeProfile();const h=M.hIn;
   p.m=genM(Math.round(h*10)/10,Date.now()%100000);p.photos=M.keep;p.updated=new Date().toISOString();
   api.call('GET','/v1/measurement-sessions/{id}/result','18 measurements');if(!M.keep)api.call('DELETE','/v1/profiles/{id}/captures','auto-delete raw images');
-  S.active=p.id;S.reviewId=p.id;persist();S.m={...S.m,stage:'intro',step:0,caps:[null,null,null],proc:0};setTimeout(()=>go('review'),400)}},650);
+  S.active=p.id;S.reviewId=p.id;persist();S.m={...S.m,stage:'choose',step:0,caps:[null,null],proc:0};setTimeout(()=>{go('review');toast('Done. Check the highlighted numbers to lock your fit.')},400)}},600);
 }
 
 document.addEventListener('click',e=>{
  const g=e.target.closest('[data-go]');if(g){e.preventDefault();go(g.dataset.go);return}
  const a=e.target.closest('[data-act],[data-set]');if(!a)return;
  if(a.dataset.set){const f=a.dataset.set,v=a.dataset.val;
-  if(f==='m-prof'){S.m.profileId=S.profiles.find(p=>p.name===v).id;const p=prof(S.m.profileId);if(p.m&&!S.m.height){S.m.height=S.m.unit==='cm'?(p.m.height.v*2.54).toFixed(0):p.m.height.v}render();return}
-  if(f==='m-unit'){const h=$('#m-h');S.m.height=h?h.value:S.m.height;if(S.m.height&&v!==S.m.unit)S.m.height=v==='cm'?(S.m.height*2.54).toFixed(0):(S.m.height/2.54).toFixed(1);S.m.unit=v;render();return}
+  if(f==='m-unit'){const h=readHeight();if(v==='cm')S.m.cm=Math.round(h*2.54);else{S.m.ft=Math.floor(h/12);S.m.inch=Math.round(h%12);if(S.m.inch===12){S.m.ft++;S.m.inch=0}}S.m.unit=v;render();return}
   if(f==='p-fit'){const p=prof(S.reviewId)||activeProfile();p.fit=v;persist();render();return}
   const d={...S.draft,[f]:v};if(f==='category'){Object.assign(d,{fabric:null});}setDraft(f==='category'?{...d,fabric:CATS[v].fab[0]}:d,true);render();return}
  const act=a.dataset.act;
@@ -1224,19 +1350,25 @@ document.addEventListener('click',e=>{
   case'save-design':S.designs.unshift({spec:S.draft,at:new Date().toISOString()});api.call('POST','/v1/designs','saved');persist();toast('Design saved to My Designs');break;
   case'to-measure':{const p=activeProfile();S.instructions=$('#instr')?.value||S.instructions;go(p&&p.m?'review':'measure');if(p&&p.m)toast('Using '+p.name+'. Review or retake below.');break}
   case'review-active':S.reviewId=activeProfile().id;go('review');break;
-  case'consent':S.m.consent=a.checked;render();break;
   case'consent2':S.m.keep=a.checked;break;
-  case'm-start':api.call('POST','/v1/measurement-sessions','consent=true, keep_images='+S.m.keep);S.m.stage='setup';S.m.profileId=S.m.profileId||S.active;{const p=prof(S.m.profileId);if(p&&p.m&&!S.m.height)S.m.height=(p.m.height.v*2.54).toFixed(0)}render();break;
-  case'm-manual':{const p=activeProfile();if(!p.m)p.m=genM(68,5);Object.values(p.m).forEach(x=>x.c='Edited');S.reviewId=p.id;persist();go('review');toast('Type your tape measurements over these starting values');break}
-  case'm-newprof':$('#newprof').hidden=false;$('#np-name').focus();break;
-  case'm-back':S.m.stage='intro';render();break;
-  case'm-go':{const nm=$('#np-name');if(nm&&nm.value.trim()){const p={id:'p'+Date.now(),name:nm.value.trim(),rel:'Family',fit:'Tailored',sizes:'',m:null,photos:false,updated:new Date().toISOString()};S.profiles.push(p);S.m.profileId=p.id;api.call('POST','/v1/profiles',p.name)}
-   const h=parseFloat($('#m-h').value);const ok=S.m.unit==='cm'?h>=90&&h<=230:h>=36&&h<=90;if(!ok){toast(S.m.unit==='cm'?'Enter a height between 90 and 230 cm':'Enter a height between 36 and 90 in');break}
-   if(!S.m.profileId){toast('Choose who you are measuring');break}S.m.height=h;S.m.stage='capture';S.m.step=0;persist();render();break}
-  case'm-step':S.m.step=+a.dataset.i;render();break;
-  case'm-cap':capture();break;
-  case'm-process':processScan();break;
-  case'rescan':S.m={...S.m,stage:'setup',profileId:(prof(S.reviewId)||activeProfile()).id,consent:true};go('measure');break;
+  case'm-pick':S.m.stage=a.dataset.val;S.m.profileId=S.m.profileId||S.active;if(a.dataset.val==='upload')S.m.caps=[null,null];prefillHeight();if(S.view!=='measure')go('measure');else{render();window.scrollTo({top:0})}break;
+  case'm-shape':S.m.kg=$('#q-kg')?.value||S.m.kg;readHeight();S.m.shape=a.dataset.val;render();break;
+  case'm-size':S.m.kg=$('#q-kg')?.value||S.m.kg;readHeight();S.m.size=a.dataset.val;render();break;
+  case'm-quick-go':{if(!readWho())break;const h=readHeight();if(!heightOk(h))break;const kg=parseFloat($('#q-kg').value);if(!(kg>=25&&kg<=220)){toast('Please enter your weight in kg');break}
+   S.m.kg=kg;const p=prof(S.m.profileId);p.m=estimateM(h,kg,S.m.shape,S.m.size==='Not sure'?null:S.m.size,Date.now()%100000);p.photos=false;p.updated=new Date().toISOString();
+   api.call('POST','/v1/measurement-estimates','height, weight, shape, size');S.active=p.id;S.reviewId=p.id;persist();S.m.stage='choose';go('review');toast('Estimated. Check the highlighted numbers to lock your fit.');break}
+  case'm-upload-go':{if(!readWho())break;const h=readHeight();if(!heightOk(h))break;S.m.hIn=h;processScan();break}
+  case'm-pause':{const M=S.m;M.paused=!M.paused;a.textContent=M.paused?'Resume':'Pause';const st=$('#livestat');if(st)st.textContent=M.paused?'PAUSED':'GET INTO POSITION';if(!M.paused)runPose();break}
+  case'm-redo':if(CAM.stream)runPose();break;
+  case'm-switch':CAM.facing=CAM.facing==='user'?'environment':'user';startCamera();toast(CAM.facing==='user'?'Front camera':'Back camera: ask someone to hold the phone');break;
+  case'm-voice':S.m.voice=!S.m.voice;a.textContent=S.m.voice?'Voice on':'Voice off';if(!S.m.voice)try{speechSynthesis.cancel()}catch(e){}break;
+  case'm-cancel':stopCamera();S.m.stage='scan';S.m.caps=[null,null];render();break;
+  case'm-retry':S.m.stage='live';S.m.step=0;S.m.caps=[null,null];render();break;
+  case'm-manual':{stopCamera();const sel=$('#m-prof');if(sel&&sel.value!=='__new')S.m.profileId=sel.value;const p=prof(S.m.profileId)||activeProfile();if(!p.m)p.m=genM(68,5);Object.values(p.m).forEach(x=>x.c='Edited');S.reviewId=p.id;persist();go('review');toast('Type your tape measurements over these starting values');break}
+  case'm-back':S.m.stage='choose';render();break;
+  case'm-go':{if(!readWho())break;const h=readHeight();if(!heightOk(h))break;S.m.hIn=h;S.m.stage='live';S.m.step=0;S.m.caps=[null,null];persist();render();window.scrollTo({top:0});
+   try{speechSynthesis.speak(new SpeechSynthesisUtterance(''))}catch(e){}break}
+  case'rescan':S.m={...S.m,stage:'scan',profileId:(prof(S.reviewId)||activeProfile()).id};prefillHeight();go('measure');break;
   case'confirm-meas':{const p=prof(S.reviewId)||activeProfile();S.active=p.id;api.call('PATCH','/v1/profiles/'+p.id,'measurements confirmed');persist();go('preview');toast(locked(p)?p.name+' is Fit Locked. 100% Fit Guarantee applies.':'Continuing at '+fitScore(p).score+'%. Standard alteration policy applies.');break}
   case'del-photos':{const p=prof(a.dataset.id);p.photos=false;api.call('DELETE','/v1/profiles/'+p.id+'/captures','user request');persist();render();toast('Capture photos deleted');break}
   case'angle':stopSpin();setAngle(+a.dataset.val);render();break;
@@ -1252,7 +1384,7 @@ document.addEventListener('click',e=>{
   case'dtab':S.dtab=a.dataset.val;S.pendingDel=null;if(S.view!=='account')go('account');else render();break;
   case'open-design':setDraft(S.designs[+a.dataset.i].spec);go('design');break;
   case'review-prof':S.reviewId=a.dataset.id;go('review');break;
-  case'scan-prof':S.m={...S.m,stage:'intro',profileId:a.dataset.id};go('measure');break;
+  case'scan-prof':S.m={...S.m,stage:'choose',profileId:a.dataset.id};go('measure');break;
   case'activate':S.active=a.dataset.id;persist();render();toast(prof(S.active).name+' will be used for orders');break;
   case'del-prof':S.pendingDel=a.dataset.id;render();break;
   case'del-prof-no':S.pendingDel=null;render();break;
@@ -1276,10 +1408,11 @@ document.addEventListener('change',e=>{
  const t=e.target;
  if(t.dataset.meas){const p=prof(S.reviewId)||activeProfile();const v=parseFloat(t.value);if(isFinite(v)&&v>0){p.m[t.dataset.meas]={v:Math.round(v*10)/10,c:'Edited',u:p.m[t.dataset.meas].u};p.updated=new Date().toISOString();persist();render();toast('Updated. Edited values are made exactly as entered.')}}
  if(t.dataset.ref){const p=prof(S.reviewId)||activeProfile();p.ref={...(p.ref||{}),[t.dataset.ref]:t.value};api.call('PATCH','/v1/profiles/'+p.id,'reference garment '+t.dataset.ref);persist();render();const nx=REF.find(([k])=>!p.ref[k]);if(nx)$('#ref-'+nx[0])?.focus()}
+ if(t.id==='m-prof'){const nm=$('#np-name');if(t.value==='__new'){nm.hidden=false;nm.focus()}else{nm.hidden=true;S.m.profileId=t.value;prefillHeight();render()}}
  if(t.id==='instr')S.instructions=t.value;
  if(t.id==='ord-prof'){S.active=t.value;persist();render()}
  if(t.dataset.status){const o=S.orders.find(x=>x.id===t.dataset.status);o.status=+t.value;api.call('PATCH','/v1/admin/orders/'+o.id+'/status',STATUSES[o.status]);persist();render();toast(o.id+' → '+STATUSES[o.status])}
- if(t.dataset.upload&&t.files&&t.files[0]){const r=new FileReader();r.onload=()=>{if(t.dataset.upload==='cap'){S.m.caps[S.m.step]=r.result;api.call('POST','/v1/measurement-sessions/{id}/captures','uploaded '+CAP[S.m.step].t);const nx=S.m.caps.findIndex(x=>!x);if(nx>=0)S.m.step=nx}else{S.refs[t.dataset.upload]=r.result;api.call('POST','/v1/designs:parse','reference image');toast('Image added. The studio will use it to guide your design.')}render()};r.readAsDataURL(t.files[0])}
+ if(t.dataset.upload&&t.files&&t.files[0]){const r=new FileReader();r.onload=()=>{if(/^cap\d$/.test(t.dataset.upload)){readWho();readHeight();S.m.caps[+t.dataset.upload.slice(3)]=r.result;api.call('POST','/v1/measurement-sessions/{id}/captures','uploaded photo')}else{S.refs[t.dataset.upload]=r.result;api.call('POST','/v1/designs:parse','reference image');toast('Image added. The studio will use it to guide your design.')}render()};r.readAsDataURL(t.files[0])}
 });
 document.addEventListener('click',e=>{if(e.target.closest('tr[data-act="asel"] select'))e.stopPropagation()},true);
 document.addEventListener('keydown',e=>{if(e.key==='Escape')$('#search').hidden=true;if(e.key==='Enter'&&e.target.id==='prompt'&&(e.metaKey||e.ctrlKey))$('[data-act="apply-prompt"]').click()});
@@ -1295,6 +1428,7 @@ $('#search').addEventListener('click',e=>{if(e.target.id==='search')$('#search')
  if(e.target.closest('[data-act="search-studio"]')){S.prompt=$('#q').value;const{ch,u}=parsePrompt(S.prompt);const base=ch.category?defaultSpec(ch.category):S.draft;setDraft({...base,...ch},true);S.understood=u;$('#search').hidden=true;go('design')}});
 
 const h0=(location.hash||'').slice(1);if(V[h0])S.view=h0;
+window.addEventListener('hashchange',()=>{const h=location.hash.slice(1);if(V[h]&&h!==S.view)go(h)});
 render();
 </script>
 
