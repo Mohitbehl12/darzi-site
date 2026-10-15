@@ -73,6 +73,7 @@ a{color:var(--accent)}
 .brand{display:flex;align-items:baseline;gap:8px;background:none;border:0;cursor:pointer;padding:0}
 .brand b{font-family:var(--display);font-size:1.6rem;font-weight:600;letter-spacing:.01em}
 .brand span{font-family:var(--mono);font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+@media (max-width:420px){.nav .brand span{display:none}}
 .links{display:flex;gap:4px}
 .links button{background:none;border:0;padding:8px 11px;border-radius:999px;cursor:pointer;color:var(--muted);font-weight:500;font-size:.9rem}
 .links button:hover,.links button[aria-current="page"]{color:var(--ink);background:var(--sunk)}
@@ -128,14 +129,14 @@ a{color:var(--accent)}
 @media (max-width:900px){.steps4{grid-template-columns:repeat(2,1fr)}}
 @media (max-width:520px){.steps4{grid-template-columns:1fr}}
 
-.cats{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}
+.cats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
 .cat{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px 12px 14px;cursor:pointer;text-align:left;display:flex;flex-direction:column;gap:6px;transition:border-color .2s,transform .2s}
 .cat:hover{border-color:var(--accent);transform:translateY(-2px)}
 .cat .thumb{aspect-ratio:3/3.4;border-radius:12px;background:var(--sunk);overflow:hidden}
 .cat .thumb svg{width:100%;height:100%}
 .cat b{font-weight:600;font-size:.98rem}
 .cat span{font-size:.8rem;color:var(--muted)}
-@media (max-width:1000px){.cats{grid-template-columns:repeat(3,1fr)}}
+@media (max-width:760px){.cats{grid-template-columns:repeat(2,1fr)}}
 @media (max-width:560px){.cats{grid-template-columns:repeat(2,1fr)}}
 
 .split{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
@@ -317,6 +318,50 @@ textarea:focus,input:focus,select:focus{outline:none;border-color:var(--accent);
 .bars line{stroke:var(--line);stroke-width:.3}
 @media print{body.printing *{visibility:hidden}body.printing #printable,body.printing #printable *{visibility:visible}body.printing #printable{position:absolute;left:0;top:0;width:100%;border:0;box-shadow:none;background:#fff;color:#000}body.printing .noprint{display:none!important}body.printing .nav,body.printing footer{display:none}}
 .calib{background:color-mix(in srgb,var(--accent) 12%,var(--surface));border:1px solid var(--accent)}
+.heroimgs .hi{position:absolute;inset:0;opacity:0;transform:scale(.97);transition:opacity .9s ease,transform 1.2s ease}
+.heroimgs .hi.on{opacity:1;transform:none}
+.heroname{position:absolute;left:50%;bottom:76px;transform:translateX(-50%);font-family:var(--display);font-style:italic;font-size:1rem;color:var(--muted);white-space:nowrap;max-width:90%;overflow:hidden;text-overflow:ellipsis}
+.statband{border-block:1px solid var(--line);background:var(--ink);color:var(--paper)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;padding-block:30px}
+.stats div{display:flex;flex-direction:column;gap:4px}
+.stats b{font-family:var(--display);font-size:2.4rem;line-height:1;color:var(--tape)}
+.stats span{font-size:.88rem;opacity:.8}
+@media (max-width:760px){.stats{grid-template-columns:1fr 1fr}}
+.edits{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+@media (max-width:1000px){.edits{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:520px){.edits{grid-template-columns:1fr}}
+.edit{position:relative;border:0;border-radius:20px;overflow:hidden;background:var(--tint);color:#1A1E1C;text-align:left;cursor:pointer;display:flex;flex-direction:column;transition:transform .3s,box-shadow .3s;padding:0}
+.edit:hover{transform:translateY(-4px);box-shadow:var(--shadow)}
+.ed-art{position:relative;aspect-ratio:4/3.4;max-width:100%}
+.ed-g{position:absolute;bottom:-4%;width:62%;aspect-ratio:3/4}
+.ed-g svg{width:100%;height:100%}
+.ed-g0{left:2%;z-index:2}.ed-g1{right:0;width:52%;bottom:2%;opacity:.95}
+.ed-txt{padding:16px 18px 20px;display:flex;flex-direction:column;gap:4px;background:linear-gradient(transparent,rgba(255,255,255,.55))}
+.ed-txt .eyebrow{color:#4A544F}
+.ed-txt b{font-family:var(--display);font-size:1.45rem;font-weight:500}
+.ed-txt span:last-child{font-size:.86rem;color:#3A433F}
+.edit .mq{fill:rgba(0,0,0,.08)}.edit .mqs{stroke:rgba(0,0,0,.08)}
+.fabrail{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(150px,1fr);gap:14px;overflow-x:auto;padding-bottom:8px;scroll-snap-type:x mandatory}
+.fab{scroll-snap-align:start;border:1px solid var(--line);background:var(--surface);border-radius:16px;padding:10px 10px 14px;text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:6px;transition:border-color .2s,transform .2s}
+.fab:hover{border-color:var(--accent);transform:translateY(-2px)}
+.sw2{aspect-ratio:1;border-radius:10px;overflow:hidden;box-shadow:inset 0 0 0 1px rgba(0,0,0,.06)}
+.sw2 svg{width:100%;height:100%;display:block}
+.fab b{font-size:.92rem}.fab span{font-size:.78rem;color:var(--muted)}
+.pcard2{transition:transform .25s,box-shadow .25s}
+.pcard2:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
+.rv{transform:translateY(14px);opacity:.55}
+.rv.in{transform:none;opacity:1;transition:transform .7s cubic-bezier(.2,.7,.2,1) var(--d,0ms),opacity .7s ease var(--d,0ms)}
+.hero-copy>*{animation:rise .8s cubic-bezier(.2,.7,.2,1) both}
+.hero-copy>*:nth-child(2){animation-delay:.06s}.hero-copy>*:nth-child(3){animation-delay:.12s}.hero-copy>*:nth-child(4){animation-delay:.18s}.hero-copy>*:nth-child(5){animation-delay:.24s}
+@keyframes rise{from{transform:translateY(10px)}to{transform:none}}
+.foot{align-items:flex-start}
+.fcols{display:grid;grid-template-columns:repeat(3,minmax(140px,1fr));gap:24px}
+.fcol{display:flex;flex-direction:column;gap:8px;align-items:flex-start}
+.fcol b{color:var(--ink);font-size:.82rem;letter-spacing:.06em;text-transform:uppercase;margin-bottom:2px}
+@media (max-width:600px){.fcols{grid-template-columns:1fr 1fr}}
+.mcta{position:fixed;left:0;right:0;bottom:0;z-index:40;display:none;gap:10px;padding:10px max(16px,env(safe-area-inset-right,0px)) calc(10px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));background:color-mix(in srgb,var(--paper) 92%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid var(--line)}
+.mcta .btn{flex:1}
+@media (max-width:760px){.mcta.show{display:flex}body:has(.mcta.show) footer{padding-bottom:90px}}
 .srctag{display:block;margin-top:4px;font-size:.68rem;color:var(--muted);font-family:var(--mono)}
 .flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:3}
 .flash.on{animation:fl .5s ease-out}
@@ -480,10 +525,11 @@ textarea:focus,input:focus,select:focus{outline:none;border-color:var(--accent);
       <p>Your Style. Your Measurements. Your Perfect Fit.</p>
       <p class="small">Prototype build. Sample orders and customers are illustrative.</p>
     </div>
-    <nav aria-label="Footer">
-      <button data-go="collections">Collections</button><button data-go="design">Design studio</button><button data-go="measure">Digital measurement</button>
-      <button data-go="privacy">Privacy policy</button><button data-go="admin">Tailor dashboard</button><button data-go="platform">Platform API</button>
-    </nav>
+    <div class="fcols">
+      <nav aria-label="Shop" class="fcol"><b>Shop</b><button data-go="collections">Collections</button><button data-act="filter" data-val="trend" data-goto="collections">Latest 2026</button><button data-act="filter" data-val="occ-wedding" data-goto="collections">Wedding edit</button><button data-go="choose">Create your outfit</button></nav>
+      <nav aria-label="Fit" class="fcol"><b>Fit</b><button data-go="measure">Digital measurement</button><button data-act="how">How it works</button><button data-go="account">My measurements</button><button data-go="privacy">Privacy policy</button></nav>
+      <nav aria-label="Business" class="fcol"><b>Business</b><button data-go="admin">Tailor dashboard</button><button data-go="platform">Platform API</button></nav>
+    </div>
   </div>
 </footer>
 
@@ -493,6 +539,7 @@ textarea:focus,input:focus,select:focus{outline:none;border-color:var(--accent);
     <div id="sout"></div>
   </div>
 </div>
+<div class="mcta" id="mcta"><button class="btn btn-primary" data-go="choose">Create your outfit</button><button class="btn btn-ghost" data-go="measure">Measure</button></div>
 <div class="toast" id="toast" hidden></div>
 
 <script>
@@ -882,11 +929,22 @@ function card(it){const sv=S.saved.includes(it.id);return`<article class="pcard2
 const thumbSm=s=>`<div class="thumb">${garmentSVG(s)}</div>`;
 
 /* ---------------- views ---------------- */
+const EDITS=[
+ {k:'wedding',name:'The Wedding Edit',eyebrow:'Shaadi season',line:'Sherwanis, anarkalis and lehengas with fine zari',tint:'#F3E9D6',ids:['ivory-zari-sherwani','emerald-zari-anarkali']},
+ {k:'casual',name:'Summer Linen',eyebrow:'Weekend · holiday',line:'Camp collars, co-ords and Bermudas that breathe',tint:'#E3EBDD',ids:['terracotta-linen-co-ord','embroidered-camp-collar-shirt']},
+ {k:'office',name:'Office Sharp',eyebrow:'Monday to Friday',line:'Oxford shirts, pleated trousers, softer blazers',tint:'#E2E8EF',ids:['unstructured-linen-blazer','office-oxford-shirt']},
+ {k:'festive',name:'The Festive Edit',eyebrow:'Diwali · Eid · puja',line:'Bundis, Pathani sets and chikankari kurtas',tint:'#F2E3DA',ids:['rust-ajrakh-bundi','mint-chikankari-kurta']}];
+const FABRIC_SHOW=[['Mul cotton','Mint','Chikankari','Feather-light, for hot days'],['Linen','Terracotta','Solid','Breathes, softens with wear'],['Silk','Ivory','Zari border','Wedding-day sheen'],['Mashru silk','Rust','Ajrakh print','Hand-block printed'],['Seersucker','Sky','Madras check','Crinkled, keeps cool'],['Wool blend','Midnight','Pinstripe','Sharp tailoring'],['Organza','Dusty Rose','Floral','Sheer, for lehengas'],['Chanderi','Maroon','Micro print','Light with a soft lustre'],['Open-weave knit','Sage','Solid','Crochet-style texture'],['Oxford cotton','White','Solid','The everyday office shirt']];
+function swatch(color,pat){const id='sw'+(++GID),col=COLORS[color]||'#ccc',dk=lum(col)<.4,dt=shade(col,dk?.22:-.17);const zari=pat==='Zari border';
+ return`<svg viewBox="0 0 120 120" aria-hidden="true"><defs>${patDef(id,pat,col,dt)}<pattern id="${id}w" width="4" height="4" patternUnits="userSpaceOnUse"><path d="M0 0H4M0 2H4" stroke="${dk?'#fff':'#000'}" stroke-opacity=".05" stroke-width=".6"/></pattern></defs><rect width="120" height="120" fill="${pat==='Solid'||zari?col:`url(#${id})`}"/><rect width="120" height="120" fill="url(#${id}w)"/>${zari?`<rect y="92" width="120" height="12" fill="${GOLD}"/><path d="M0 96H120M0 100H120" stroke="${shade(GOLD,-.3)}" stroke-width=".8"/>`:''}<path d="M120 0V120H0" fill="none" stroke="#000" stroke-opacity=".06"/></svg>`}
+const HERO_IDS=['terracotta-linen-co-ord','ivory-zari-sherwani','emerald-zari-anarkali','unstructured-linen-blazer'];
+const HERO_SPECS=()=>HERO_IDS.map(byId).filter(Boolean).map(i=>i.spec);
 function heroVisual(){
  const s=normalize({category:'shirt',color:'Sky',fabric:'Oxford cotton',collar:'Mandarin',sleeves:'Full',buttons:'Hidden placket',pockets:'One chest pocket',fit:'Slim',length:'Longer back',pattern:'Solid'});
  const tag=(x,y,txt,w)=>`<g class="tape-tag"><rect x="${x}" y="${y}" width="${w}" height="15" rx="3"/><text x="${x+6}" y="${y+10.5}">${txt}</text></g>`;
  return`<div class="fitcard" aria-label="Shirt on a digital mannequin with measurement annotations">
-  <div class="layer">${garmentSVG(s)}</div>
+  <div class="layer heroimgs">${[s,...HERO_SPECS()].map((x,i)=>`<div class="hi ${i===0?'on':''}">${garmentSVG(x)}</div>`).join('')}</div>
+  <div class="heroname" id="heroname">${esc(title(s))}</div>
   <div class="layer"><svg viewBox="0 0 300 400" aria-hidden="true">
    <path class="mline draw" d="M90,77 L210,77"/><circle class="mend" cx="90" cy="77" r="2.4"/><circle class="mend" cx="210" cy="77" r="2.4"/>${tag(4,62,'SHOULDER 18.3 in',80)}
    <path class="mline draw" style="animation-delay:.3s" d="M95,128 L205,128"/><circle class="mend" cx="95" cy="128" r="2.4"/><circle class="mend" cx="205" cy="128" r="2.4"/>${tag(212,121,'CHEST 40.2 in',72)}
@@ -918,6 +976,10 @@ V.home=()=>{
   ${heroVisual()}
  </div></section>
 
+ <section class="statband"><div class="wrap stats">
+  <div><b>2</b><span>photos from your phone</span></div><div><b>18</b><span>tailoring measurements</span></div><div><b>${CATALOG.length}+</b><span>designs, all made to measure</span></div><div><b>100%</b><span>Fit Guarantee: free alteration or remake</span></div>
+ </div></section>
+
  <section class="band band-alt" id="how"><div class="wrap">
   <div class="sec-head"><div class="stack"><p class="eyebrow">How it works</p><h2>From idea to <em>your fit</em> in four steps</h2></div><p>Everything a tailor does in the shop — style advice, measuring and fitting — happens on your phone. You approve each step before anything is cut.</p></div>
   <div class="steps4">
@@ -933,9 +995,19 @@ V.home=()=>{
  </div></section>
 
  <section class="band band-alt"><div class="wrap">
+  <div class="sec-head"><div class="stack"><p class="eyebrow">The Edits</p><h2>Dressed for <em>the occasion</em></h2></div><p>Curated looks for the moments that matter. Pick one and make it yours.</p></div>
+  <div class="edits">${EDITS.map(e=>`<button class="edit" data-act="filter" data-val="occ-${e.k}" data-goto="collections" style="--tint:${e.tint}"><div class="ed-art">${e.ids.map(byId).filter(Boolean).map((it,i)=>`<div class="ed-g ed-g${i}">${garmentSVG(it.spec)}</div>`).join('')}</div><div class="ed-txt"><span class="eyebrow">${e.eyebrow}</span><b>${e.name}</b><span>${e.line}</span></div></button>`).join('')}</div>
+ </div></section>
+
+ <section class="band"><div class="wrap">
   <div class="sec-head"><div class="stack"><p class="eyebrow">Latest designs · 2026</p><h2>What's new <em>this season</em></h2></div><p>Camp collars, pleated wide-leg trousers, unstructured linen tailoring, Pathani sets, bundis, angrakha wraps, co-ords and floor-length anarkalis. In sage, mint, lavender, terracotta, wine and butter yellow. Every piece made to your measurements.</p></div>
   <div class="trendrail">${TRENDS.slice(0,10).map(card).join('')}</div>
   <div class="row" style="margin-top:22px"><button class="btn btn-primary" data-act="filter" data-val="trend" data-goto="collections">See all ${TRENDS.length} latest designs</button></div>
+ </div></section>
+
+ <section class="band band-alt"><div class="wrap">
+  <div class="sec-head"><div class="stack"><p class="eyebrow">Fabric library</p><h2>Choose the cloth, <em>not just the cut</em></h2></div><p>From breathable mul cotton to wedding silks with zari. Every fabric can be paired with any design in the studio.</p></div>
+  <div class="fabrail">${FABRIC_SHOW.map(([f,c,pt,note])=>`<button class="fab" data-act="fab-pick" data-f="${esc(f)}" data-c="${esc(c)}" data-p="${esc(pt)}"><div class="sw2">${swatch(c,pt)}</div><b>${esc(f)}</b><span>${esc(note)}</span></button>`).join('')}</div>
  </div></section>
 
  <section class="band"><div class="wrap split">
@@ -1198,10 +1270,10 @@ function feedbackUI(o){
 function tracker(o){return`<div class="track">${STATUSES.map((s,i)=>`<div class="${i<o.status?'done':i===o.status?'now':''}"><span>${s}</span></div>`).join('')}</div>`}
 
 V.collections=()=>{
- const items=CATALOG.filter(i=>S.filter==='all'||(S.filter==='trend'?i.trend:i.spec.category===S.filter));
+ const occF=S.filter.startsWith('occ-')?S.filter.slice(4):null;const items=CATALOG.filter(i=>S.filter==='all'||(S.filter==='trend'?i.trend:occF?i.occ.includes(occF):i.spec.category===S.filter));
  return`<div class="wrap page"><div class="page-head"><p class="eyebrow">Collections</p><h2>Designs to make your own</h2><p>${CATALOG.length} designs across ${Object.keys(CATS).length-1} garment types, including ${TRENDS.length} new for 2026. Every design is made to your measurements. Pick one to customise in the studio.</p></div>
  <div class="row" style="margin-bottom:14px"><button class="btn btn-ghost" data-act="search" style="flex:1;justify-content:flex-start;color:var(--muted);max-width:520px">Search “Blue blazer for wedding”</button></div>
- <div class="filters"><button class="chip" data-act="filter" data-val="trend" aria-pressed="${S.filter==='trend'}">Latest 2026 · ${TRENDS.length}</button><button class="chip" data-act="filter" data-val="all" aria-pressed="${S.filter==='all'}">All · ${CATALOG.length}</button>${Object.entries(CATS).filter(([k])=>k!=='custom').map(([k,c])=>`<button class="chip" data-act="filter" data-val="${k}" aria-pressed="${S.filter===k}">${c.name}</button>`).join('')}</div>
+ <div class="filters"><button class="chip" data-act="filter" data-val="trend" aria-pressed="${S.filter==='trend'}">Latest 2026 · ${TRENDS.length}</button>${EDITS.map(e=>`<button class="chip" data-act="filter" data-val="occ-${e.k}" aria-pressed="${S.filter==='occ-'+e.k}">${e.name.replace('The ','')}</button>`).join('')}<button class="chip" data-act="filter" data-val="all" aria-pressed="${S.filter==='all'}">All · ${CATALOG.length}</button>${Object.entries(CATS).filter(([k])=>k!=='custom').map(([k,c])=>`<button class="chip" data-act="filter" data-val="${k}" aria-pressed="${S.filter===k}">${c.name}</button>`).join('')}</div>
  ${items.length?`<div class="grid-cards">${items.map(card).join('')}</div>`:`<div class="empty"><b>No ready designs in this category yet</b><button class="btn btn-primary" data-act="pick-cat" data-cat="${S.filter}">Design one from scratch</button></div>`}</div>`};
 
 V.cart=()=>`<div class="wrap page"><div class="page-head"><p class="eyebrow">Cart</p><h2>Your cart</h2></div>
@@ -1398,8 +1470,12 @@ function renderNow(){
  document.querySelectorAll('.links button[data-go]').forEach(b=>{if(b.dataset.go===v)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current')});
  const cc=$('#cartCount');cc.textContent=S.cart.length;cc.hidden=!S.cart.length;
  if(v==='measure'&&S.m.stage==='live'&&!CAM.stream)setTimeout(startCamera,0);
+ const mc=$('#mcta');if(mc)mc.classList.toggle('show',['home','collections'].includes(v));
+ clearInterval(window.heroT);if(v==='home'&&!matchMedia('(prefers-reduced-motion: reduce)').matches){const names=[title(normalize({category:'shirt',color:'Sky',fabric:'Oxford cotton'})),...HERO_IDS.map(id=>byId(id)?.name).filter(Boolean)];let i=0;window.heroT=setInterval(()=>{const hs=document.querySelectorAll('.heroimgs .hi');if(!hs.length)return clearInterval(window.heroT);hs[i].classList.remove('on');i=(i+1)%hs.length;hs[i].classList.add('on');const n=$('#heroname');if(n)n.textContent=i?names[i]:'Made to your measurements'},3800)}
+ reveal();
  if(v==='preview'){const r=$('#angle');if(r)r.addEventListener('input',e=>setAngle(+e.target.value))}
 }
+function reveal(){if(!('IntersectionObserver'in window)||matchMedia('(prefers-reduced-motion: reduce)').matches)return;const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{rootMargin:'0px 0px -8% 0px'});document.querySelectorAll('#view .sec-head,#view .cat,#view .pcard2,#view .edit,#view .fab,#view .step4,#view .stats>div').forEach((el,i)=>{if(el.getBoundingClientRect().top>innerHeight){el.classList.add('rv');el.style.setProperty('--d',(i%6)*45+'ms');io.observe(el)}})}
 function go(v,keep){if(v!=='measure'||S.m.stage!=='live')stopCamera();if(S.view==='measure'&&v!=='measure'&&S.m.stage==='live')S.m.stage='scan';S.view=v;$('#drawer').hidden=true;if(v!=='preview')stopSpin();try{history.replaceState(null,'','#'+v)}catch(e){}render();if(!keep)window.scrollTo({top:0})}
 function setAngle(a){S.view3d.angle=a;const b=$('#rotbox');if(b)b.innerHTML=rotSVG(a);const l=$('#angval');if(l)l.textContent=a+'°';const r=$('#angle');if(r&&+r.value!==a)r.value=a}
 function stopSpin(){clearInterval(spinTimer);spinTimer=null;S.view3d.auto=false}
@@ -1679,6 +1755,7 @@ document.addEventListener('click',e=>{
   case'add-cart':S.cart.push({spec:S.draft,pid:S.active});persist();render();toast('Added to cart');break;
   case'ord-ok':S.ordOk=a.checked;render();break;
   case'place':if(!S.auth){toast('Please sign in first');break}placeOrder();break;
+  case'fab-pick':{const f=a.dataset.f,c=a.dataset.c,pt=a.dataset.p;const cat=Object.entries(CATS).find(([k,x])=>k!=='custom'&&x.fab.includes(f))?.[0]||'custom';setDraft({...defaultSpec(cat),fabric:f,color:c,pattern:pt});S.prompt='';go('design');toast(f+' in '+c.toLowerCase()+' selected');break}
   case'filter':S.filter=a.dataset.val;if(a.dataset.goto)go(a.dataset.goto);else render();break;
   case'cart-rm':S.cart.splice(+a.dataset.i,1);persist();render();break;
   case'cart-order':{const it=S.cart[+a.dataset.i];setDraft(it.spec);if(prof(it.pid))S.active=it.pid;S.cart.splice(+a.dataset.i,1);persist();go('order');break}
