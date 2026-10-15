@@ -1,0 +1,120 @@
+{
+ "fabric": {
+  "Cotton poplin": 0,
+  "Oxford cotton": 300,
+  "Linen": 900,
+  "Cotton-linen": 500,
+  "Washed cotton": 100,
+  "Seersucker": 500,
+  "Silk": 1800,
+  "Mashru silk": 1300,
+  "Supima jersey": 400,
+  "Organic cotton jersey": 200,
+  "Linen jersey": 500,
+  "Open-weave knit": 700,
+  "Cotton": 0,
+  "Mul cotton": 200,
+  "Khadi": 600,
+  "Chanderi": 1200,
+  "Kota Doria": 700,
+  "Cotton twill": 300,
+  "Ripstop": 400,
+  "Wool blend": 2500,
+  "Tropical wool": 2000,
+  "Stretch cotton": 400,
+  "Velvet": 1600,
+  "Tweed": 2200,
+  "Crepe": 700,
+  "Organza": 1400,
+  "Denim": 600,
+  "Brocade": 1500
+ },
+ "patCost": {
+  "Solid": 0,
+  "Zari border": 1200,
+  "Chikankari": 900,
+  "Ajrakh print": 500
+ },
+ "cats": {
+  "shirt": {
+   "name": "Shirt",
+   "base": 2490,
+   "days": 7
+  },
+  "tshirt": {
+   "name": "T-Shirt",
+   "base": 1290,
+   "days": 5
+  },
+  "kurta": {
+   "name": "Kurta",
+   "base": 3290,
+   "days": 9
+  },
+  "sherwani": {
+   "name": "Sherwani",
+   "base": 16990,
+   "days": 21
+  },
+  "bandhgala": {
+   "name": "Bandhgala",
+   "base": 8990,
+   "days": 14
+  },
+  "bundi": {
+   "name": "Bundi",
+   "base": 3490,
+   "days": 8
+  },
+  "coord": {
+   "name": "Co-ord set",
+   "base": 4790,
+   "days": 10
+  },
+  "trousers": {
+   "name": "Trousers",
+   "base": 2790,
+   "days": 7
+  },
+  "suit": {
+   "name": "Suit",
+   "base": 14990,
+   "days": 18
+  },
+  "blazer": {
+   "name": "Blazer",
+   "base": 9990,
+   "days": 14
+  },
+  "jacket": {
+   "name": "Jacket",
+   "base": 5990,
+   "days": 12
+  },
+  "dress": {
+   "name": "Dress",
+   "base": 4490,
+   "days": 10
+  },
+  "anarkali": {
+   "name": "Anarkali",
+   "base": 6490,
+   "days": 14
+  },
+  "lehenga": {
+   "name": "Lehenga set",
+   "base": 12990,
+   "days": 24
+  },
+  "blouse": {
+   "name": "Saree Blouse",
+   "base": 1890,
+   "days": 6
+  },
+  "custom": {
+   "name": "Custom design",
+   "base": 3990,
+   "days": 14
+  }
+ }
+}
