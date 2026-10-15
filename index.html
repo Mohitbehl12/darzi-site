@@ -316,6 +316,7 @@ textarea:focus,input:focus,select:focus{outline:none;border-color:var(--accent);
 .bars text.ax{fill:var(--muted);font-size:2.4px}
 .bars line{stroke:var(--line);stroke-width:.3}
 @media print{body.printing *{visibility:hidden}body.printing #printable,body.printing #printable *{visibility:visible}body.printing #printable{position:absolute;left:0;top:0;width:100%;border:0;box-shadow:none;background:#fff;color:#000}body.printing .noprint{display:none!important}body.printing .nav,body.printing footer{display:none}}
+.calib{background:color-mix(in srgb,var(--accent) 12%,var(--surface));border:1px solid var(--accent)}
 .srctag{display:block;margin-top:4px;font-size:.68rem;color:var(--muted);font-family:var(--mono)}
 .flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:3}
 .flash.on{animation:fl .5s ease-out}
@@ -582,6 +583,7 @@ function fitScore(p){
  const gates=[['Body scan complete',1,'18 measurements captured'],['Uncertain values verified',g2,`${ver} of ${unc.length} confirmed with a tape`],['Consistency checks',g3,`${pass} of ${ch.length} pass`],['Cross-checked with a shirt that fits',g4,ri===null?'Not added yet':ri.length?`${ri.length} mismatch${ri.length>1?'es':''} to resolve`:'Matches your scan']];
  return{score:Math.floor(gates.reduce((s,g)=>s+g[1]*25,0)+1e-9),gates,ri,ch,unc}}
 const locked=p=>fitScore(p).score===100;
+const GIRTHS=['neck','upperChest','chest','waist','abdomen','trouserWaist','hip','thigh','knee','calf'];
 const TAPE={neck:'Around the base of the neck where a collar sits, one finger inside the tape.',wrist:'Just above the wrist bone. Add your watch side if you wear one.',calf:'Around the widest part of the calf, standing.',waist:'At the navel, relaxed. Don’t hold your breath.',abdomen:'Around the fullest part of the stomach.',upperChest:'High under the armpits, above the chest.',bicep:'Around the fullest part of the upper arm, arm relaxed.',trouserWaist:'Where you wear your trousers, usually 1–2 in below the navel.',thigh:'Around the fullest part of the thigh, just below the crotch.',knee:'Around the middle of the knee, standing straight.',chest:'Around the fullest part of the chest, under the arms.',shoulder:'Across the back, from shoulder bone to shoulder bone.',hip:'Around the fullest part of the seat, feet together.',arm:'From the shoulder bone, over a slightly bent elbow, to the wrist.',shirtLen:'From the base of the collar at the back down to where you want the hem.',inseam:'From the crotch down the inside leg to the floor, barefoot.',outseam:'From the waistband down the outside leg to the floor.'};
 
 /* ---------------- garment renderer ---------------- */
@@ -1053,7 +1055,7 @@ V.measure=()=>{
   body=`<div class="measure-grid"><div class="panel stack" style="gap:18px">
    ${whoField()}${heightField()}
    <div class="stack" style="gap:8px"><span class="glabel">Before you tap start</span>
-   <ul class="checklist"><li>Lean your phone against a wall or bottle at waist height.</li><li>Stand about 2–3 steps back in a bright room.</li><li>Wear fitted clothes. You’ll hear what to do.</li></ul></div>
+   <ul class="checklist"><li>Lean your phone against a wall or bottle at waist height.</li><li>Stand about 2–3 steps back in a bright room.</li><li>Wear fitted clothes (a T-shirt and leggings or shorts are best). Tie long hair up.</li><li>You’ll hear what to do. The photo is taken when you’re still.</li></ul></div>
    <button class="btn btn-primary btn-lg" data-act="m-go">Start camera</button><p class="small muted" id="body-status">${BODY.ready?'✓ Body detection ready':BODY.failed?'Body detection unavailable on this device. The scan will use a timer instead.':'Loading body detection…'}</p>
    <p class="small muted">By tapping Start camera you agree to body capture for measurement. Photos are deleted right after your numbers are calculated. <label style="display:inline-flex;gap:6px;align-items:center;cursor:pointer"><input type="checkbox" id="keep" data-act="consent2" ${M.keep?'checked':''} style="accent-color:var(--accent)"> Keep my photos instead</label></p>
    <div class="row"><button class="linkbtn small" data-act="m-back">← Other ways to measure</button></div>
@@ -1105,14 +1107,16 @@ V.review=()=>{
  if(!p||!p.m)return`<div class="wrap page">${stepper('review')}<div class="empty"><b>No measurements yet for ${esc(p?p.name:'this profile')}</b><p>Capture them with your phone or enter them manually.</p><button class="btn btn-primary" data-go="measure">Start measuring</button></div></div>`;
  const F=fitScore(p),open=new Set(F.unc.filter(([k])=>!['Verified','Edited'].includes(p.m[k].c)).map(([k])=>k));
  let rows='',g='';
- MEAS.forEach(([k,l,grp])=>{if(grp!==g){g=grp;rows+=`<tr class="grp"><td colspan="4">${grp}</td></tr>`}const x=p.m[k];rows+=`<tr${open.has(k)?' class="needs"':''}><td>${l}${open.has(k)?`<br><span class="small tip">${esc(TAPE[k]||'Measure with a soft tape, snug but not tight.')}</span>`:''}</td><td><input type="number" step="0.1" id="m-${k}" value="${x.v}" data-meas="${k}" aria-label="${l} in inches"> <span class="small muted">in</span><div class="cm">${cm(x.v)} cm</div></td><td><span class="conf ${x.c}">${x.c}</span>${x.src?`<span class="srctag">${x.src==='photo'?'from photo':x.src==='you'?'you entered':'estimated'}</span>`:''}</td><td>${open.has(k)?`<button class="btn btn-sm btn-ghost" data-act="verify" data-k="${k}">Tape matches</button>`:''}</td></tr>`});
+ MEAS.forEach(([k,l,grp])=>{if(grp!==g){g=grp;rows+=`<tr class="grp"><td colspan="4">${grp}</td></tr>`}const x=p.m[k];rows+=`<tr${open.has(k)?' class="needs"':''}><td>${l}${open.has(k)?`<br><span class="small tip">${esc(TAPE[k]||'Measure with a soft tape, snug but not tight.')}</span>`:''}</td><td><input type="number" step="0.1" id="m-${k}" value="${x.v}" data-meas="${k}" aria-label="${l} in inches"> <span class="small muted">in</span><div class="cm">${cm(x.v)} cm</div></td><td><span class="conf ${x.c}">${x.c}</span>${x.src?`<span class="srctag">${x.src==='photo'?(x.calibrated?'photo · tape-corrected':'from photo'):x.src==='you'?'you entered':'estimated'}</span>`:''}</td><td>${open.has(k)?`<button class="btn btn-sm btn-ghost" data-act="verify" data-k="${k}">Tape matches</button>`:''}</td></tr>`});
  const meter=`<div class="fitmeter ${F.score===100?'lock':''}"><div class="row"><span class="fitnum">${F.score}%</span><div><b>${F.score===100?'Fit Locked':'Fit score'}</b><p class="small muted">${F.score===100?'Covered by the 100% Fit Guarantee.':'Complete the steps below to lock 100% fit.'}</p></div></div>
   <div class="bar"><span style="width:${F.score}%"></span></div>
   <ul class="gates">${F.gates.map(([t,v,s])=>`<li class="${v>=1?'ok':''}"><span class="gi">${v>=1?'✓':Math.round(v*25)}</span><div><b>${t}</b><span class="small muted">${s}</span></div></li>`).join('')}</ul></div>`;
  const ri=F.ri;
+ const cal=S.calib&&S.calib.pid===p.id?S.calib:null;const calLabel=k=>(MEAS.find(x=>x[0]===k)||[0,k])[1];
+ const calBox=cal?`<div class="notice calib"><b>Your tape ${calLabel(cal.from).toLowerCase()} is ${Math.abs((cal.ratio-1)*100).toFixed(1)}% ${cal.ratio>1?'larger':'smaller'} than the scan.</b> Scans tend to be off by the same amount on every girth, so applying this correction to the other ${cal.targets.length} scanned girths (${cal.targets.map(calLabel).join(', ').toLowerCase()}) usually makes them more accurate.<div class="row" style="margin-top:10px"><button class="btn btn-primary btn-sm" data-act="calib-yes">Apply correction</button><button class="btn btn-ghost btn-sm" data-act="calib-no">No thanks</button></div></div>`:'';
  return`<div class="wrap page">${stepper('review')}
  <div class="page-head"><p class="eyebrow">Step 4 · ${esc(p.name)}</p><h2>Review &amp; Adjust Measurements</h2><p>A phone scan gets you close. These steps take it to an exact fit: confirm the uncertain values with a tape, cross-check against a shirt that already fits you, and let the consistency checks catch typos. Edited values are made exactly as entered.</p></div>
- <div class="measure-grid"><div class="stack" style="gap:20px">
+ <div class="measure-grid"><div class="stack" style="gap:20px">${calBox}
   <div class="panel tscroll" style="padding:6px 8px"><table class="mtable"><thead><tr><th>Measurement</th><th>Value</th><th>Confidence</th><th><span class="sr">Verify</span></th></tr></thead><tbody>${rows}</tbody></table></div>
   <div class="panel stack" style="gap:14px"><div class="row"><h3>Cross-check with a shirt that fits you</h3><span class="spacer"></span>${ri&&!ri.length?'<span class="pill on">Matches</span>':''}</div>
    <p class="small muted">Lay your best-fitting shirt flat and measure it. This is the most reliable way to catch a scan error, because the shirt has already been proven on your body.</p>
@@ -1382,7 +1386,13 @@ function adReports(){const R=S.ad.reports;if(!R)return'<p class="muted">Loading�
 
 /* ---------------- render + routing ---------------- */
 let spinTimer=null;
+let rendering=false,renderAgain=false;
 function render(){
+ if(rendering){renderAgain=true;return}
+ rendering=true;try{renderNow()}finally{rendering=false}
+ if(renderAgain){renderAgain=false;setTimeout(render,0)}
+}
+function renderNow(){
  const v=V[S.view]?S.view:'home';
  $('#view').innerHTML=V[v]();
  document.querySelectorAll('.links button[data-go]').forEach(b=>{if(b.dataset.go===v)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current')});
@@ -1453,6 +1463,8 @@ function assess(lm,k){
  }else if(shw>torso*.32)return{ok:false,msg:'Turn sideways, to your right'};
  return{ok:true,msg:'Perfect. Hold still'};
 }
+function motion(lm){const p=LIVE.prev;if(!p||!lm)return 1;let d=0;const K=[0,11,12,23,24,27,28];K.forEach(i=>d+=Math.hypot(lm[i].x-p[i].x,lm[i].y-p[i].y));return d/K.length}
+let LCV=null;function brightness(v){try{LCV=LCV||document.createElement('canvas');LCV.width=32;LCV.height=32;const x=LCV.getContext('2d',{willReadFrequently:true});x.drawImage(v,0,0,32,32);const d=x.getImageData(0,0,32,32).data;let s=0;for(let i=0;i<d.length;i+=4)s+=d[i]*.3+d[i+1]*.59+d[i+2]*.11;return s/(d.length/4)}catch(e){return 255}}
 const BONES=[[11,12],[11,13],[13,15],[12,14],[14,16],[11,23],[12,24],[23,24],[23,25],[25,27],[24,26],[26,28],[27,29],[28,30]];
 function drawSkel(lm,ok){
  const c=$('#skel'),v=$('#camv');if(!c||!v)return;const W=c.clientWidth,H=c.clientHeight;if(c.width!==W||c.height!==H){c.width=W;c.height=H}
@@ -1494,7 +1506,11 @@ function runPose(){
   if(M.paused||LIVE.busy||t-LIVE.lastT<130||!v||!v.videoWidth)return;
   LIVE.busy=true;LIVE.lastT=t;const r=await detect(v);LIVE.busy=false;
   if(S.m.stage!=='live'||!CAM.stream)return;
-  const lm=r&&r.poseLandmarks,a=assess(lm,POSES[M.step].k);drawSkel(lm,a.ok);guide(a);
+  const lm=r&&r.poseLandmarks;let a=assess(lm,POSES[M.step].k);
+  if(a.ok){const mv=motion(lm);LIVE.prev=lm;if(mv>.012)a={ok:false,msg:'Hold still for a moment'}}else LIVE.prev=lm;
+  if(t-(LIVE.lightT||0)>1500){LIVE.lightT=t;LIVE.dark=brightness(v)<55}
+  if(LIVE.dark&&a.ok)a={ok:false,msg:'It’s a bit dark. Turn on a light or face a window'};
+  drawSkel(lm,a.ok);guide(a);
   if(a.ok){if(!LIVE.okSince)LIVE.okSince=t;if(!LIVE.counting&&t-LIVE.okSince>700)startCount()}
   else{LIVE.okSince=0;if(LIVE.counting){cancelCount();say(a.msg);LIVE.lastSay=Date.now()}}
   if(Date.now()-LIVE.started>20000)anyway(true);
@@ -1503,13 +1519,16 @@ function runPose(){
 }
 function snap(){
  const M=S.m,v=$('#camv');let data='sim';cancelAnimationFrame(LIVE.raf);anyway(false);
- try{const w=v.videoWidth,h=v.videoHeight;if(w&&h){const sc=Math.min(1,960/Math.max(w,h)),c=document.createElement('canvas');c.width=Math.round(w*sc);c.height=Math.round(h*sc);c.getContext('2d').drawImage(v,0,0,c.width,c.height);data=c.toDataURL('image/jpeg',.82)}}catch(e){}
+ const grab=()=>{try{const w=v.videoWidth,h=v.videoHeight;if(!w||!h)return null;const sc=Math.min(1,960/Math.max(w,h)),c=document.createElement('canvas');c.width=Math.round(w*sc);c.height=Math.round(h*sc);c.getContext('2d').drawImage(v,0,0,c.width,c.height);return c}catch(e){return null}};
+ const first=grab();if(first)data=first.toDataURL('image/jpeg',.82);
+ M.bursts=M.bursts||[[],[]];M.bursts[M.step]=first?[first]:[];
+ const step=M.step;[180,360].forEach(t=>setTimeout(()=>{const c=grab();if(c&&M.bursts&&M.bursts[step])M.bursts[step].push(c)},t));
  M.caps[M.step]=data;const f=$('#flash');if(f){f.classList.remove('on');void f.offsetWidth;f.classList.add('on')}
  try{navigator.vibrate&&navigator.vibrate(90)}catch(e){}
  api.call('POST','/v1/measurement-sessions/{id}/captures',POSES[M.step].n+' photo');
  const th=$('#thumbs');if(th)th.innerHTML=thumbsHTML();const sk=$('#skel');if(sk)sk.getContext('2d').clearRect(0,0,sk.width,sk.height);
- if(M.step<POSES.length-1){M.step++;setTimeout(runPose,1100)}
- else{say('All done. Calculating your measurements.');setTimeout(()=>{stopCamera();processScan()},800)}
+ if(M.step<POSES.length-1){M.step++;setTimeout(runPose,1200)}
+ else{say('All done. Calculating your measurements.');setTimeout(()=>{stopCamera();processScan()},900)}
 }
 
 /* ---- measuring from the two photos ---- */
@@ -1590,13 +1609,16 @@ async function processScan(){
  const ok=await initBody();step();
  let meas=null;
  if(ok){const[fc,sc]=await Promise.all([toCanvas(M.caps[0]),toCanvas(M.caps[1])]);
-  const F=await analyzeStill(fc);step();const Sd=await analyzeStill(sc);step();
-  try{if(F)meas=measureFrom(F,Sd,M.hIn)}catch(e){console.warn('measure failed',e)}}
+  const fronts=(M.bursts&&M.bursts[0]&&M.bursts[0].length?M.bursts[0]:[fc]).filter(Boolean),sides=(M.bursts&&M.bursts[1]&&M.bursts[1].length?M.bursts[1]:[sc]).filter(Boolean);
+  const FA=[];for(const c of fronts){const a=await analyzeStill(c);if(a)FA.push(a)}step();
+  const SA=[];for(const c of sides){const a=await analyzeStill(c);if(a)SA.push(a)}step();
+  const runs=[];FA.forEach((F,i)=>{try{runs.push(measureFrom(F,SA[i]||SA[0]||null,M.hIn))}catch(e){console.warn('measure failed',e)}});
+  if(runs.length){meas={};const keys=new Set(runs.flatMap(o=>Object.keys(o)));keys.forEach(k=>{const v=runs.map(o=>o[k]).filter(x=>x>0).sort((a,b)=>a-b);if(v.length)meas[k]=v[Math.floor(v.length/2)]})}}
  else{step();step()}
  const p=prof(M.profileId)||activeProfile();const{m,fromPhoto}=blendWithPrior(meas,Math.round(M.hIn*10)/10,Date.now()%100000);step();
  p.m=m;p.photos=M.keep;p.updated=new Date().toISOString();
  api.call('GET','/v1/measurement-sessions/{id}/result',fromPhoto+' of 17 measured from photos');if(!M.keep)api.call('DELETE','/v1/profiles/{id}/captures','auto-delete raw images');
- step();S.active=p.id;S.reviewId=p.id;persist();S.m={...S.m,stage:'choose',step:0,caps:[null,null],proc:0};
+ step();S.active=p.id;S.reviewId=p.id;persist();S.m={...S.m,stage:'choose',step:0,caps:[null,null],bursts:null,proc:0};
  setTimeout(()=>{go('review');toast(fromPhoto>=10?`${fromPhoto} measurements read from your photos. Check the highlighted ones.`:'We couldn’t read the photos clearly, so some numbers are estimates. Check the highlighted ones.')},300);
 }
 
@@ -1638,6 +1660,8 @@ document.addEventListener('click',e=>{
   case'm-upload-go':{if(!readWho())break;const h=readHeight();if(!heightOk(h))break;S.m.hIn=h;processScan();break}
   case'm-pause':{const M=S.m;M.paused=!M.paused;a.textContent=M.paused?'Resume':'Pause';const st=$('#livestat');if(st)st.textContent=M.paused?'PAUSED':'GET INTO POSITION';if(!M.paused)runPose();break}
   case'm-redo':if(CAM.stream)runPose();break;
+  case'calib-yes':{const c=S.calib,p=prof(c.pid);c.targets.forEach(g=>{const x=p.m[g];p.m[g]={...x,v:Math.round(x.v*c.ratio*10)/10,c:'Medium',u:true,src:'photo',calibrated:true}});S.calib=null;persist();render();toast(`Corrected ${c.targets.length} girths using your tape. Confirm them below to lock your fit.`);break}
+  case'calib-no':S.calib=null;render();break;
   case'm-anyway':cancelCount();snap();break;
   case'm-switch':CAM.facing=CAM.facing==='user'?'environment':'user';startCamera();toast(CAM.facing==='user'?'Front camera':'Back camera: ask someone to hold the phone');break;
   case'm-voice':S.m.voice=!S.m.voice;a.textContent=S.m.voice?'Voice on':'Voice off';if(!S.m.voice)try{speechSynthesis.cancel()}catch(e){}break;
@@ -1695,7 +1719,11 @@ document.addEventListener('click',e=>{
 });
 document.addEventListener('change',e=>{
  const t=e.target;
- if(t.dataset.meas){const p=prof(S.reviewId)||activeProfile();const v=parseFloat(t.value);if(isFinite(v)&&v>0){p.m[t.dataset.meas]={v:Math.round(v*10)/10,c:'Edited',u:p.m[t.dataset.meas].u};p.updated=new Date().toISOString();persist();render();toast('Updated. Edited values are made exactly as entered.')}}
+ if(t.dataset.meas){const p=prof(S.reviewId)||activeProfile();const v=parseFloat(t.value),k=t.dataset.meas,old=p.m[k];if(isFinite(v)&&v>0){
+   p.m[k]={v:Math.round(v*10)/10,c:'Edited',u:old.u,src:'you',scan:old.src==='photo'?old.v:old.scan};p.updated=new Date().toISOString();
+   const base=p.m[k].scan;S.calib=null;
+   if(base&&GIRTHS.includes(k)){const ratio=v/base;const targets=GIRTHS.filter(g=>g!==k&&p.m[g]&&p.m[g].src==='photo'&&!['Edited','Verified'].includes(p.m[g].c));if(Math.abs(ratio-1)>.015&&targets.length)S.calib={pid:p.id,from:k,ratio,targets}}
+   persist();render();toast('Updated. Edited values are made exactly as entered.')}}
  if(t.dataset.ref){const p=prof(S.reviewId)||activeProfile();p.ref={...(p.ref||{}),[t.dataset.ref]:t.value};api.call('PATCH','/v1/profiles/'+p.id,'reference garment '+t.dataset.ref);persist();render();const nx=REF.find(([k])=>!p.ref[k]);if(nx)$('#ref-'+nx[0])?.focus()}
  if(t.id==='m-prof'){const nm=$('#np-name');if(t.value==='__new'){nm.hidden=false;nm.focus()}else{nm.hidden=true;S.m.profileId=t.value;prefillHeight();render()}}
  if(t.classList&&t.classList.contains('stockin')){const b={};b[t.dataset.k]=+t.value;srv.req('PATCH','/admin/fabrics/'+t.dataset.fab,b).then(j=>{const i=S.ad.fabrics.findIndex(x=>x.id==t.dataset.fab);S.ad.fabrics[i]=j.fabric;render();toast('Stock updated')}).catch(e=>toast(e.message))}
