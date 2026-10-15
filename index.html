@@ -292,6 +292,30 @@ textarea:focus,input:focus,select:focus{outline:none;border-color:var(--accent);
 .livecam canvas#skel{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none}
 .livecam.good{box-shadow:0 0 0 4px #2D7A4D}
 .livecam.adjust{box-shadow:0 0 0 4px #E4B12B}
+.cc{display:inline-grid;place-items:center;padding:0 12px;border:1px solid var(--line);border-radius:12px;background:var(--sunk);font-family:var(--mono);font-size:.9rem;flex:none;height:44px}
+.signin input[type=tel]{flex:1;min-width:0}
+.notif.unread{border-left:3px solid var(--accent)}
+.latecell{color:var(--bad);font-weight:700}
+.hist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.hist li{display:flex;flex-direction:column;border-left:2px solid var(--accent);padding-left:10px}
+.swd{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:6px;vertical-align:-1px;border:1px solid var(--line)}
+.stockin{width:90px;padding:6px 8px;font-family:var(--mono)}
+.kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
+.kpis div{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:4px}
+.kpis b{font-family:var(--display);font-size:1.6rem;line-height:1.1;font-variant-numeric:tabular-nums}
+@media (max-width:900px){.kpis{grid-template-columns:repeat(3,1fr)}}
+@media (max-width:520px){.kpis{grid-template-columns:repeat(2,1fr)}}
+.hbars{display:grid;grid-template-columns:repeat(14,minmax(0,1fr));gap:6px;height:190px;align-items:end;border-bottom:1px solid var(--line);padding-bottom:22px;position:relative}
+.hb{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;position:relative;min-width:0}
+.hbar{width:70%;max-width:38px;background:var(--accent);border-radius:5px 5px 2px 2px}
+.hv{font-family:var(--mono);font-size:.74rem;margin-bottom:4px}
+.hd{position:absolute;bottom:-20px;font-size:.66rem;color:var(--muted);white-space:nowrap}
+.bars{width:100%;height:auto;display:block}
+.bars rect{fill:var(--accent)}
+.bars text{font-size:2.6px;fill:var(--ink);font-family:var(--mono)}
+.bars text.ax{fill:var(--muted);font-size:2.4px}
+.bars line{stroke:var(--line);stroke-width:.3}
+@media print{body.printing *{visibility:hidden}body.printing #printable,body.printing #printable *{visibility:visible}body.printing #printable{position:absolute;left:0;top:0;width:100%;border:0;box-shadow:none;background:#fff;color:#000}body.printing .noprint{display:none!important}body.printing .nav,body.printing footer{display:none}}
 .srctag{display:block;margin-top:4px;font-size:.68rem;color:var(--muted);font-family:var(--mono)}
 .flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:3}
 .flash.on{animation:fl .5s ease-out}
@@ -383,8 +407,8 @@ textarea:focus,input:focus,select:focus{outline:none;border-color:var(--accent);
 .atable select{padding:6px 8px;font-size:.82rem;width:auto}
 .sheet{display:grid;grid-template-columns:200px minmax(0,1fr);gap:24px}
 @media (max-width:760px){.sheet{grid-template-columns:1fr}}
-.sheet .views{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.sheet .views div{background:var(--sunk);border-radius:10px;aspect-ratio:3/3.6}
+.sheet .views{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;align-self:start}
+.sheet .views div{background:var(--sunk);border-radius:10px;aspect-ratio:3/3.6;min-width:0;overflow:hidden}
 .sheet .views svg{width:100%;height:100%}
 .mgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px 18px;font-size:.86rem}
 .mgrid div{display:flex;justify-content:space-between;gap:8px;border-bottom:1px dotted var(--line);padding-block:3px}
@@ -433,7 +457,7 @@ textarea:focus,input:focus,select:focus{outline:none;border-color:var(--accent);
     <div class="spacer"></div>
     <div class="icons">
       <button class="ibtn" data-act="search" aria-label="Search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg></button>
-      <button class="ibtn" data-go="account" aria-label="Account"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8.5" r="4"/><path d="M4.5 20c1.3-3.6 4.2-5.4 7.5-5.4s6.2 1.8 7.5 5.4"/></svg></button>
+      <button class="ibtn" data-go="account" aria-label="Account"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8.5" r="4"/><path d="M4.5 20c1.3-3.6 4.2-5.4 7.5-5.4s6.2 1.8 7.5 5.4"/></svg><span class="badge" id="acctBadge" hidden>0</span></button>
       <button class="ibtn" data-go="cart" aria-label="Cart"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 8h14l-1.2 11.2a1 1 0 0 1-1 .8H7.2a1 1 0 0 1-1-.8z"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8"/></svg><span class="badge" id="cartCount" hidden>0</span></button>
       <button class="ibtn menu-btn" data-act="menu" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
     </div>
@@ -793,9 +817,9 @@ const S={
  orders:store.get('orders2',seedOrders()),designs:store.get('designs',[]),cart:store.get('cart',[]),
  saved:store.get('saved',['ivory-silk-wedding-kurta']),recent:store.get('recent',['office-oxford-shirt','navy-peak-lapel-blazer']),
  m:{stage:'choose',step:0,keep:false,profileId:null,unit:'ft',ft:5,inch:8,cm:173,hIn:68,caps:[null,null],proc:0,voice:true,paused:false,fail:null,shape:'Average',size:null,kg:''},
- reviewId:null,fb:{},view3d:{angle:0,auto:false},filter:'trend',dtab:'designs',staff:false,adminSel:null,pendingDel:null,lastOrder:null,copyText:null
+ reviewId:null,fb:{},auth:store.get('auth',null),health:null,notifs:[],si:{stage:'phone',phone:'',devCode:null,busy:false,err:'',name:'',pin:''},ad:{tab:'orders',orders:[],customers:[],fabrics:[],reports:null,filter:'open',q:'',loading:false,events:{}},view3d:{angle:0,auto:false},filter:'trend',dtab:'designs',staff:false,adminSel:null,pendingDel:null,lastOrder:null,copyText:null
 };
-function persist(){store.set('draft',S.draft);store.set('profiles2',S.profiles);store.set('active',S.active);store.set('orders2',S.orders);store.set('designs',S.designs);store.set('cart',S.cart);store.set('saved',S.saved);store.set('recent',S.recent)}
+function persist(){if(S.auth)queueSync();else store.set('profiles2',S.profiles);store.set('draft',S.draft);store.set('active',S.active);if(!S.auth)store.set('orders2',S.orders);if(!S.auth)store.set('designs',S.designs);store.set('cart',S.cart);store.set('saved',S.saved);store.set('recent',S.recent)}
 const prof=id=>S.profiles.find(p=>p.id===id);
 const activeProfile=()=>prof(S.active)||S.profiles[0];
 
@@ -1152,12 +1176,12 @@ V.order=()=>{
   <div class="row"><span class="pill ${locked(p)?'on':''}">${locked(p)?'✓ Fit Locked · 100% Fit Guarantee':'Fit score '+fitScore(p).score+'%'}</span></div>
   <p class="small muted">Inclusive of GST. Estimated delivery <b>${fmtDate(eta)}</b> (${c.days} days production + shipping).</p>
   <label class="consent"><input type="checkbox" id="ord-ok" data-act="ord-ok" ${S.ordOk?'checked':''}><span class="small">I've reviewed the design and measurements and they're correct.</span></label>
-  <button class="btn btn-primary btn-lg" data-act="place" ${S.ordOk&&p.m?'':'disabled'}>Confirm &amp; Order</button>
-  <p class="small muted">Payment is simulated in this prototype.</p>
+  ${S.auth?`<button class="btn btn-primary btn-lg" data-act="place" ${S.ordOk&&p.m?'':'disabled'}>Confirm &amp; Order</button>
+  <p class="small muted">${S.health&&S.health.paymentsLive?'Pay securely by UPI, card or netbanking through Razorpay.':'Test mode: no real payment is taken yet.'}</p>`:signInBox('order')}
  </div></div></div></div>`;
 };
-V.confirmed=()=>{const o=S.orders.find(x=>x.id===S.lastOrder);if(!o)return V.account();
- return`<div class="wrap page"><div class="proc" style="max-width:620px"><span class="pill on">Order placed</span><h2>Thank you. Your ${esc(CATS[o.spec.category].one.toLowerCase())} is in the queue.</h2><p class="muted">Order <b class="mono">${o.id}</b> · estimated delivery ${fmtDate(new Date(o.eta))}</p>
+V.confirmed=()=>{const o=S.orders.find(x=>x.id===S.lastOrder);if(!o)return V.account();const paid=o.paymentStatus;
+ return`<div class="wrap page"><div class="proc" style="max-width:620px"><span class="pill on">Order placed</span><h2>Thank you. Your ${esc(CATS[o.spec.category].one.toLowerCase())} is in the queue.</h2><p class="muted">Order <b class="mono">${o.id}</b> · estimated delivery ${fmtDate(new Date(o.eta))}${paid==='test-paid'?' · test payment':paid==='paid'?' · paid':''}</p><p class="small muted">We’ve saved it to your account. You’ll see production updates in My Profile → Updates.</p>
  <div class="panel" style="width:100%;text-align:left">${tracker(o)}</div>
  <div class="row" style="justify-content:center"><button class="btn btn-primary" data-act="dtab" data-val="orders">Track in My Orders</button><button class="btn btn-ghost" data-go="choose">Design another</button></div></div></div>`};
 const FB_AREAS=['Chest','Waist','Length','Sleeve'];
@@ -1181,39 +1205,37 @@ V.cart=()=>`<div class="wrap page"><div class="page-head"><p class="eyebrow">Car
  :`<div class="empty"><b>Your cart is empty</b><p>Designs you add from the preview step appear here.</p><button class="btn btn-primary" data-go="choose">Create your outfit</button></div>`}</div>`;
 
 V.account=()=>{
- const tabs=[['designs','My Designs'],['measurements','My Measurements'],['orders','My Orders'],['saved','Saved Styles'],['recent','Recently Viewed'],['profile','Profile']];
+ if(!S.auth&&S.dtab!=='guest')return`<div class="wrap page"><div style="max-width:460px;margin:24px auto" class="stack"><p class="eyebrow">My Profile</p><h2>Your Darzi account</h2>${signInBox('account')}<button class="linkbtn small" data-act="dtab" data-val="guest" style="align-self:flex-start">Look around with sample data first</button></div></div>`;
+ if(S.dtab==='guest')S.dtab='designs';
+ const tabs=[['updates','Updates'+(S.notifs.filter(n=>!n.read).length?' · '+S.notifs.filter(n=>!n.read).length:'')],['designs','My Designs'],['measurements','My Measurements'],['orders','My Orders'],['saved','Saved Styles'],['recent','Recently Viewed'],['profile','Profile']];
  let body='';const t=S.dtab;
- if(t==='designs')body=S.designs.length?`<div class="grid-cards">${S.designs.map((d,i)=>`<article class="pcard2"><div class="thumb">${garmentSVG(d.spec)}</div><div class="body"><b>${esc(title(d.spec))}</b><span class="meta">Saved ${fmtDate(new Date(d.at))}</span><div class="foot2"><span class="mono">${inr(price(d.spec))}</span><button class="btn btn-sm btn-ghost" data-act="open-design" data-i="${i}">Open</button></div></div></article>`).join('')}</div>`:`<div class="empty"><b>No saved designs yet</b><p>Use “Save design” in the studio to keep a design here.</p><button class="btn btn-primary" data-go="design">Open the studio</button></div>`;
+ if(t==='designs')body=S.designs.length?`<div class="grid-cards">${S.designs.map((d,i)=>`<article class="pcard2"><div class="thumb">${garmentSVG(normalize(d.spec))}</div><div class="body"><b>${esc(title(normalize(d.spec)))}</b><span class="meta">Saved ${fmtDate(new Date(d.at))}</span><div class="foot2"><span class="mono">${inr(price(normalize(d.spec)))}</span><button class="btn btn-sm btn-ghost" data-act="open-design" data-i="${i}">Open</button></div></div></article>`).join('')}</div>`:`<div class="empty"><b>No saved designs yet</b><p>Use “Save design” in the studio to keep a design here.</p><button class="btn btn-primary" data-go="design">Open the studio</button></div>`;
  if(t==='measurements')body=`<div class="cards2">${S.profiles.map(p=>`<div class="panel prof"><div class="row"><h3>${esc(p.name)}</h3>${p.id===S.active?'<span class="pill on">Active</span>':''}${p.m?(locked(p)?'<span class="pill on">✓ Fit Locked</span>':'<span class="pill">Fit '+fitScore(p).score+'%</span>'):''}<span class="spacer"></span><span class="small muted">${esc(p.rel)}</span></div>
    ${p.m?`<div class="nums"><div><span class="small muted">Height</span><b>${p.m.height.v} in</b></div><div><span class="small muted">Chest</span><b>${p.m.chest.v} in</b></div><div><span class="small muted">Waist</span><b>${p.m.waist.v} in</b></div><div><span class="small muted">Fit</span><b>${esc(p.fit)}</b></div></div>`:'<p class="muted small">No measurements captured yet.</p>'}
    <p class="small muted">${p.sizes?esc(p.sizes)+' · ':''}Updated ${fmtDate(new Date(p.updated))} · ${p.photos?'Capture photos stored (encrypted)':'No photos stored'}</p>
    <div class="row">${p.m?`<button class="btn btn-sm btn-ghost" data-act="review-prof" data-id="${p.id}">Edit</button>`:''}<button class="btn btn-sm btn-ghost" data-act="scan-prof" data-id="${p.id}">${p.m?'Re-scan':'Measure'}</button>${p.id!==S.active?`<button class="btn btn-sm btn-ghost" data-act="activate" data-id="${p.id}">Use for orders</button>`:''}${p.photos?`<button class="btn btn-sm btn-ghost" data-act="del-photos" data-id="${p.id}">Delete photos</button>`:''}
    ${S.pendingDel===p.id?`<span class="inline-confirm"><span>Delete ${esc(p.name)} permanently?</span><button class="btn btn-sm btn-danger" data-act="del-prof-yes" data-id="${p.id}">Delete</button><button class="btn btn-sm btn-ghost" data-act="del-prof-no">Cancel</button></span>`:`<button class="btn btn-sm btn-danger" data-act="del-prof" data-id="${p.id}">Delete profile</button>`}</div></div>`).join('')}
    <div class="panel stack"><h3>Add a profile</h3><p class="small muted">Keep measurements for family or clients in one account.</p><input type="text" id="add-prof" placeholder="e.g. Son"><button class="btn btn-ghost" data-act="add-prof" style="align-self:flex-start">Add profile</button></div></div>`;
- if(t==='orders'){const mine=S.orders.filter(o=>o.customer==='Aarav Mehta');body=`<div class="stack" style="gap:12px">${mine.map(o=>`<div class="panel order-row"><div class="thumb">${garmentSVG(o.spec)}</div><div class="stack" style="gap:8px"><div class="row"><b>${esc(title(o.spec))}</b>${o.sample?'<span class="pill">Sample</span>':''}<span class="spacer"></span><span class="mono small">${o.id}</span></div><span class="small muted">For ${esc(o.profileName)} · ${inr(o.price)} · ordered ${fmtDate(new Date(o.created))} · ${o.status>=6?'delivered':'arrives by '+fmtDate(new Date(o.eta))}</span>${tracker(o)}${o.status>=6?feedbackUI(o):''}</div></div>`).join('')}</div>`}
+ if(t==='updates')body=S.auth?(S.notifs.length?`<div class="stack" style="gap:10px">${S.notifs.map(n=>`<div class="panel notif ${n.read?'':'unread'}"><div class="row"><b>${esc(n.title)}</b><span class="spacer"></span><span class="small muted">${new Date(n.created_at).toLocaleString('en-IN',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}</span></div>${n.body?`<p class="small muted">${esc(n.body)}</p>`:''}</div>`).join('')}</div>`:`<div class="empty"><b>No updates yet</b><p>Order confirmations and production updates appear here.</p></div>`):`<div class="empty"><b>Sign in to get order updates</b><button class="btn btn-primary" data-act="sign-out">Sign in</button></div>`;
+ if(t==='orders'){const mine=S.auth?S.orders:S.orders.filter(o=>o.customer==='Aarav Mehta');body=`${mine.length?'':`<div class="empty"><b>No orders yet</b><p>Design something and place your first order.</p><button class="btn btn-primary" data-go="choose">Create your outfit</button></div>`}<div class="stack" style="gap:12px">${mine.map(o=>`<div class="panel order-row"><div class="thumb">${garmentSVG(o.spec)}</div><div class="stack" style="gap:8px"><div class="row"><b>${esc(title(o.spec))}</b>${o.sample?'<span class="pill">Sample</span>':''}<span class="spacer"></span><span class="mono small">${o.id}</span></div><span class="small muted">For ${esc(o.profileName)} · ${inr(o.price)} · ordered ${fmtDate(new Date(o.created))} · ${o.status>=6?'delivered':'arrives by '+fmtDate(new Date(o.eta))}</span>${tracker(o)}${o.status>=6?feedbackUI(o):''}</div></div>`).join('')}</div>`}
  if(t==='saved'){const it=CATALOG.filter(i=>S.saved.includes(i.id));body=it.length?`<div class="grid-cards">${it.map(card).join('')}</div>`:`<div class="empty"><b>No saved styles</b><p>Tap the heart on any design to save it.</p></div>`}
  if(t==='recent'){const it=S.recent.map(id=>CATALOG.find(i=>i.id===id)).filter(Boolean);body=it.length?`<div class="grid-cards">${it.map(card).join('')}</div>`:`<div class="empty"><b>Nothing viewed yet</b></div>`}
- if(t==='profile')body=`<div class="panel stack" style="max-width:560px;gap:14px"><div class="row"><h3>Aarav Mehta</h3><span class="pill">Sample account</span></div><label class="stack" style="gap:6px"><span class="glabel">Mobile</span><input type="text" id="acc-phone" value="+91 98XXX XX214"></label><label class="stack" style="gap:6px"><span class="glabel">Delivery address</span><input type="text" id="acc-addr" value="DLF Phase 2, Gurugram, Haryana 122002"></label><label class="stack" style="gap:6px"><span class="glabel">Units</span><select id="acc-units"><option>Inches (tailoring standard)</option><option>Centimetres</option></select></label><p class="small muted">Sign-in uses a one-time code sent to your mobile. Body data is encrypted at rest and never shared with third parties for advertising.</p><button class="linkbtn" data-go="privacy" style="align-self:flex-start">Privacy &amp; data controls</button></div>`;
- return`<div class="wrap page"><div class="page-head"><p class="eyebrow">My Profile</p><h2>Welcome back, Aarav</h2></div><div class="dash"><nav class="dnav">${tabs.map(([k,l])=>`<button data-act="dtab" data-val="${k}" aria-current="${k===t}">${l}</button>`).join('')}</nav><div>${body}</div></div></div>`;
+ const U=S.auth&&S.auth.user;
+ if(t==='profile')body=U?`<div class="panel stack" style="max-width:560px;gap:14px"><div class="row"><h3>${esc(U.name||'Your details')}</h3>${U.role==='staff'?'<span class="pill on">Staff</span>':''}</div><label class="stack" style="gap:6px"><span class="glabel">Mobile</span><input type="text" id="acc-phone" value="+${esc(U.phone)}" disabled></label><label class="stack" style="gap:6px"><span class="glabel">Name</span><input type="text" id="acc-name" value="${esc(U.name||'')}" autocomplete="name"></label><label class="stack" style="gap:6px"><span class="glabel">Email</span><input type="email" id="acc-email" value="${esc(U.email||'')}" autocomplete="email"></label><label class="stack" style="gap:6px"><span class="glabel">Delivery address</span><textarea id="acc-addr" autocomplete="street-address" style="min-height:70px">${esc(U.address||'')}</textarea></label><div class="row"><button class="btn btn-primary" data-act="acc-save">Save details</button><button class="btn btn-ghost" data-act="sign-out">Sign out</button></div><p class="small muted">Body data is encrypted at rest and never shared with third parties for advertising.</p><button class="linkbtn" data-go="privacy" style="align-self:flex-start">Privacy &amp; data controls</button></div>`
+ :`<div class="panel stack" style="max-width:560px;gap:14px"><div class="row"><h3>Aarav Mehta</h3><span class="pill">Sample account</span></div><label class="stack" style="gap:6px"><span class="glabel">Mobile</span><input type="text" id="acc-phone" value="+91 98XXX XX214"></label><label class="stack" style="gap:6px"><span class="glabel">Delivery address</span><input type="text" id="acc-addr" value="DLF Phase 2, Gurugram, Haryana 122002"></label><label class="stack" style="gap:6px"><span class="glabel">Units</span><select id="acc-units"><option>Inches (tailoring standard)</option><option>Centimetres</option></select></label><p class="small muted">Sign-in uses a one-time code sent to your mobile. Body data is encrypted at rest and never shared with third parties for advertising.</p><button class="btn btn-primary" data-act="sign-out" style="align-self:flex-start">Sign in to your own account</button></div>`;
+ return`<div class="wrap page"><div class="page-head"><p class="eyebrow">My Profile${S.auth?'':' · sample data'}</p><h2>${S.auth?(U.name?'Welcome back, '+esc(U.name.split(' ')[0]):'Welcome to Darzi'):'Welcome back, Aarav'}</h2></div><div class="dash"><nav class="dnav">${tabs.map(([k,l])=>`<button data-act="dtab" data-val="${k}" aria-current="${k===t}">${l}</button>`).join('')}</nav><div>${body}</div></div></div>`;
 };
 
 V.admin=()=>{
- if(!S.staff)return`<div class="wrap page"><div class="panel stack" style="max-width:440px;margin:40px auto;gap:16px"><p class="eyebrow">Darzi Workshop</p><h2>Tailor dashboard</h2><p class="muted small">Staff sign in with a separate account and role-based access. Customers can't see this area.</p><input type="email" id="staff-email" value="workshop@darzi.example" aria-label="Staff email"><button class="btn btn-primary" data-act="staff-in">Continue as tailor (demo)</button></div></div>`;
- const sel=S.orders.find(o=>o.id===S.adminSel)||S.orders[0];
- const dstat=o=>o.status>=6?'Delivered':o.status===5?'In transit':'Not dispatched';
- return`<div class="wrap page"><div class="page-head"><p class="eyebrow">Workshop</p><h2>Production orders</h2><p>${S.orders.filter(o=>o.status<6).length} open orders. Select an order for its production specification sheet.</p></div>
- <div class="panel tscroll" style="padding:4px 6px"><table class="atable"><thead><tr><th>Order ID</th><th>Customer</th><th>Garment</th><th>Design</th><th>Fabric</th><th>Production status</th><th>Delivery</th></tr></thead><tbody>
- ${S.orders.map(o=>`<tr data-act="asel" data-id="${o.id}" class="${o.id===sel.id?'sel':''}"><td class="mono">${o.id}</td><td>${esc(o.customer)}<br><span class="small muted">${esc(o.profileName)}</span></td><td>${CATS[o.spec.category].one}</td><td class="small">${esc(o.spec.color)} · ${esc(o.spec.collar||o.spec.pockets)} · ${esc(o.spec.fit)}</td><td>${esc(o.spec.fabric)}</td><td><select data-status="${o.id}" aria-label="Status for ${o.id}">${STATUSES.map((s,i)=>`<option value="${i}" ${i===o.status?'selected':''}>${s}</option>`).join('')}</select></td><td><span class="pill ${o.status>=5?'on':''}">${dstat(o)}</span></td></tr>`).join('')}
- </tbody></table></div>
- <div class="panel" style="margin-top:20px"><div class="row" style="margin-bottom:16px"><h3>Production specification · <span class="mono">${sel.id}</span></h3><span class="spacer"></span><button class="btn btn-ghost btn-sm" data-act="copy-spec">Copy spec sheet</button></div>
-  <div class="sheet"><div class="views"><div>${garmentSVG(sel.spec,'front')}</div><div>${garmentSVG(sel.spec,'back')}</div></div>
-   <div class="stack" style="gap:14px"><dl class="spec"><dt>Customer</dt><dd>${esc(sel.customer)} · ${esc(sel.profileName)}</dd><dt>Garment</dt><dd>${CATS[sel.spec.category].one}</dd><dt>Design</dt><dd>${esc(describe(sel.spec))}</dd><dt>Fabric</dt><dd>${esc(sel.spec.fabric)} · ${esc(sel.spec.color)} · ${esc(sel.spec.pattern)}</dd><dt>Instructions</dt><dd>${esc(sel.notes||'None')}</dd><dt>Fit</dt><dd>${sel.locked?'<span class="pill on">✓ Fit Locked · 100% Fit Guarantee</span>':'<span class="pill">Standard policy · not locked</span>'}${sel.adj&&Object.keys(sel.adj).length?' <span class="small muted">Fit memory applied: '+Object.entries(sel.adj).map(([k,v])=>k+' '+(v>0?'+':'')+v+' in').join(', ')+'</span>':''}</dd><dt>Status</dt><dd>${STATUSES[sel.status]} · ${dstat(sel)} · due ${fmtDate(new Date(sel.eta))}</dd></dl>
-   <span class="glabel">Body measurements (in)</span><div class="mgrid">${MEAS.map(([k,l])=>`<div><span>${l.replace(' (sleeve)','')}</span><b>${sel.m[k].v}${sel.m[k].c==='Low'?' *':''}</b></div>`).join('')}</div>
-   <span class="glabel">Finished garment (in)</span><div class="mgrid">${finished(sel.spec,sel.m,sel.adj).map(([l,v])=>`<div><span>${l}</span><b>${v.toFixed(1)}</b></div>`).join('')}</div>
-   <p class="small muted">* Low scan confidence. Confirm with the customer before cutting.</p>
-   ${S.copyText?`<textarea class="copyarea" id="copyarea" readonly>${esc(S.copyText)}</textarea>`:''}</div></div></div></div>`;
+ if(!isStaff()&&!S.staffDemo)return`<div class="wrap page"><div style="max-width:460px;margin:24px auto" class="stack"><p class="eyebrow">Darzi Workshop</p><h2>Tailor dashboard</h2>${S.auth?`<p class="notice warn small">You’re signed in as a customer. <button class="linkbtn" data-act="sign-out">Sign out</button> and sign in with a staff number.</p>`:signInBox('admin')}<button class="linkbtn small" data-act="staff-demo" style="align-self:flex-start">Preview with sample orders instead</button></div></div>`;
+ const A=S.ad,tabs=[['orders','Orders'],['customers','Customers'],['fabrics','Fabric stock'],['reports','Reports']];
+ const list=S.staffDemo?S.orders:A.orders;
+ const body=A.tab==='orders'?adOrders(list):A.tab==='customers'?adCustomers():A.tab==='fabrics'?adFabrics():adReports();
+ return`<div class="wrap page"><div class="page-head"><p class="eyebrow">Workshop${S.staffDemo?' · sample data':''}</p><h2>${A.tab==='orders'?'Production orders':tabs.find(t=>t[0]===A.tab)[1]}</h2><p>${list.filter(o=>o.status<6).length} open orders${A.loading?' · refreshing…':''}</p></div>
+ <div class="row" style="margin-bottom:18px"><div class="chips">${tabs.map(([k,l])=>`<button class="chip" data-act="ad-tab" data-val="${k}" aria-pressed="${A.tab===k}" ${S.staffDemo&&k!=='orders'?'disabled':''}>${l}</button>`).join('')}</div><span class="spacer"></span>${S.staffDemo?'<button class="btn btn-ghost btn-sm" data-act="staff-demo-off">Exit preview</button>':'<button class="btn btn-ghost btn-sm" data-act="ad-refresh">Refresh</button><button class="btn btn-ghost btn-sm" data-act="sign-out">Sign out</button>'}</div>
+ ${body}</div>`;
 };
-function specText(o){return[`DARZI PRODUCTION SPEC — ${o.id}`,`Customer: ${o.customer} (${o.profileName})`,`Garment: ${CATS[o.spec.category].one}`,`Design: ${describe(o.spec)}`,`Fabric: ${o.spec.fabric} / ${o.spec.color} / ${o.spec.pattern}`,`Instructions: ${o.notes||'None'}`,`Fit: ${o.locked?'LOCKED - 100% Fit Guarantee':'Standard policy'}`,`Status: ${STATUSES[o.status]}  Due: ${fmtDate(new Date(o.eta))}`,'','BODY (in)',...MEAS.map(([k,l])=>`  ${l.padEnd(22)} ${String(o.m[k].v).padStart(5)}${o.m[k].c==='Low'?'  *check':''}`),'','FINISHED (in)',...finished(o.spec,o.m,o.adj).map(([l,v])=>`  ${l.padEnd(22)} ${v.toFixed(1).padStart(5)}`)].join('\n')}
+function specText(o){return[`DARZI PRODUCTION SPEC — ${o.id}`,`Customer: ${o.customer} (${o.profileName||''})${o.phone?' +'+o.phone:''}`,`Garment: ${CATS[o.spec.category].one}`,`Design: ${describe(o.spec)}`,`Fabric: ${o.spec.fabric} / ${o.spec.color} / ${o.spec.pattern}`,`Instructions: ${o.notes||'None'}`,`Fit: ${o.locked?'LOCKED - 100% Fit Guarantee':'Standard policy'}`,`Status: ${STATUSES[o.status]}  Due: ${fmtDate(new Date(o.eta))}`,'','BODY (in)',...MEAS.filter(([k])=>o.m[k]).map(([k,l])=>`  ${l.padEnd(22)} ${String(o.m[k].v).padStart(5)}${o.m[k].c==='Low'?'  *check':''}`),'','FINISHED (in)',...finished(o.spec,o.m,o.adj).map(([l,v])=>`  ${l.padEnd(22)} ${v.toFixed(1).padStart(5)}`)].join('\n')}
 
 const ENDPOINTS=[
  ['Auth','POST','/v1/auth/otp','Send one-time code to mobile or email'],['Auth','POST','/v1/auth/verify','Exchange code for access + refresh tokens'],
@@ -1239,6 +1261,124 @@ V.privacy=()=>`<div class="wrap page" style="max-width:780px"><div class="page-h
  ['Accuracy','Digital measurements are estimates with a confidence score. They are not professional or medical measurements. You can review and correct every value before ordering. The 100% Fit Guarantee is a promise about the garment, backed by free alterations and remakes, not a claim that the scan itself is exact.'],
  ['Deletion','Delete a single profile, its capture images, or your whole account from My Profile. Deletion is processed within 30 days, including backups.'],
  ['Security','All traffic uses TLS. Data is encrypted at rest. Staff access is role-based and logged.']].map(([h,t])=>`<div class="pcard"><b>${h}</b><p class="muted">${t}</p></div>`).join('')}</div></div>`;
+
+/* ---------------- backend connection ---------------- */
+const API_BASE=window.DARZI_API||(/onrender\.com$/.test(location.hostname)?'https://darzi-api-d385.onrender.com':'http://localhost:3999');
+const srv={
+ async req(method,path,body){
+  const h={'content-type':'application/json'};if(S.auth)h.authorization='Bearer '+S.auth.token;
+  const slow=setTimeout(()=>toast('Waking up the server, this can take up to a minute the first time…'),3500);
+  let r;try{r=await fetch(API_BASE+'/api'+path,{method,headers:h,body:body?JSON.stringify(body):undefined})}catch(e){clearTimeout(slow);throw new Error('Can’t reach the server. Check your internet connection and try again.')}
+  clearTimeout(slow);const j=await r.json().catch(()=>({}));
+  if(r.status===401&&S.auth){signOut(true);throw new Error(j.error||'Please sign in again')}
+  if(!r.ok)throw new Error(j.error||'Something went wrong. Please try again.');return j},
+};
+const sent={};let syncT=null;
+function profBody(p){return{name:p.name,rel:p.rel,fit:p.fit,sizes:p.sizes,photos:!!p.photos,m:p.m,ref:p.ref||null,adj:p.adj||{}}}
+function queueSync(){clearTimeout(syncT);syncT=setTimeout(syncProfiles,700)}
+async function syncProfiles(){if(!S.auth||!S.loaded)return;for(const p of S.profiles){const b=JSON.stringify(profBody(p));if(sent[p.id]===b)continue;try{await srv.req('PUT','/profiles/'+encodeURIComponent(p.id),profBody(p));sent[p.id]=b}catch(e){toast('Couldn’t save '+p.name+': '+e.message);return}}}
+function mapOrder(o){return{...o,created:o.created,eta:o.eta||o.created}}
+async function loadMe(){
+ if(S.loaded)await syncProfiles();
+ const j=await srv.req('GET','/me');S.auth.user=j.user;store.set('auth',S.auth);
+ let profiles=j.profiles.map(p=>({...p,adj:p.adj||{}}));
+ if(!profiles.length){ // first sign-in: bring over the guest's own (non-sample) profiles, else start one
+  const mine=(store.get('profiles2',[])||[]).filter(p=>!['p1','p2','p3'].includes(p.id)&&p.m);
+  profiles=mine.length?mine:[{id:'p'+Date.now(),name:'My Measurements',rel:'Self',fit:'Tailored',sizes:'',m:null,photos:false,updated:new Date().toISOString(),adj:{}}];
+ }else profiles.forEach(p=>sent[p.id]=JSON.stringify(profBody(p)));
+ S.profiles=profiles;if(!prof(S.active))S.active=profiles[0].id;
+ S.orders=j.orders.map(mapOrder);S.designs=j.designs.map(d=>({id:d.id,spec:d.spec,at:d.created_at}));S.notifs=j.notifications;
+ S.loaded=true;syncProfiles();updateBadges();
+}
+function updateBadges(){const n=S.notifs.filter(x=>!x.read).length,b=$('#acctBadge');if(b){b.textContent=n;b.hidden=!n}}
+function signOut(expired){S.auth=null;S.loaded=false;store.set('auth',null);for(const k in sent)delete sent[k];
+ S.profiles=store.get('profiles2',seedProfiles());S.orders=store.get('orders2',seedOrders());S.designs=store.get('designs',[]);S.notifs=[];S.ad.orders=[];
+ if(!prof(S.active))S.active=S.profiles[0].id;S.si={stage:'phone',phone:'',devCode:null,busy:false,err:'',name:'',pin:''};updateBadges();render();if(expired)toast('Your session ended. Please sign in again.')}
+const isStaff=()=>S.auth&&S.auth.user&&S.auth.user.role==='staff';
+function signInBox(ctx){
+ const t=S.si,staff=ctx==='admin';
+ const title=staff?'Staff sign in':ctx==='order'?'Sign in to place your order':'Sign in to Darzi';
+ const sub=staff?'Use the mobile number listed as staff, then your admin PIN.':ctx==='order'?'Your order, measurements and designs are saved to your account so you can track them on any device.':'Save your measurements, designs and orders, and track deliveries on any device.';
+ if(t.stage==='phone')return`<div class="panel stack signin" style="gap:14px"><h3>${title}</h3><p class="small muted">${sub}</p>
+  <label class="stack" style="gap:6px"><span class="glabel">Mobile number</span><div class="row" style="flex-wrap:nowrap"><span class="cc">+91</span><input type="tel" id="si-phone" inputmode="numeric" autocomplete="tel-national" maxlength="10" placeholder="10-digit mobile" value="${esc(t.phone)}"></div></label>
+  ${staff?'':`<label class="stack" style="gap:6px"><span class="glabel">Your name <span class="muted">(optional)</span></span><input type="text" id="si-name" autocomplete="name" value="${esc(t.name)}"></label>`}
+  ${t.err?`<p class="small" style="color:var(--bad)">${esc(t.err)}</p>`:''}
+  <button class="btn btn-primary" data-act="si-send" ${t.busy?'disabled':''}>${t.busy?'Sending…':'Send code'}</button></div>`;
+ return`<div class="panel stack signin" style="gap:14px"><h3>Enter the 6-digit code</h3><p class="small muted">Sent to +91 ${esc(t.phone)}. <button class="linkbtn small" data-act="si-back">Change number</button></p>
+  ${t.devCode?`<p class="notice warn small"><b>Test mode:</b> SMS isn’t connected yet, so your code is <b class="mono">${esc(t.devCode)}</b>.</p>`:''}
+  <input type="text" id="si-code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="••••••" style="font-family:var(--mono);font-size:1.4rem;letter-spacing:.3em;max-width:220px">
+  ${staff?`<label class="stack" style="gap:6px"><span class="glabel">Admin PIN</span><input type="password" id="si-pin" inputmode="numeric" maxlength="12" style="max-width:220px"></label>`:''}
+  ${t.err?`<p class="small" style="color:var(--bad)">${esc(t.err)}</p>`:''}
+  <div class="row"><button class="btn btn-primary" data-act="si-verify" data-ctx="${ctx}" ${t.busy?'disabled':''}>${t.busy?'Checking…':'Verify & continue'}</button><button class="linkbtn small" data-act="si-send">Resend code</button></div></div>`;
+}
+async function siSend(){const t=S.si;const ph=$('#si-phone');if(ph)t.phone=ph.value.replace(/\D/g,'').slice(-10);const nm=$('#si-name');if(nm)t.name=nm.value.trim();
+ if(!/^[6-9]\d{9}$/.test(t.phone)){t.err='Enter a valid 10-digit Indian mobile number';render();return}
+ t.busy=true;t.err='';render();try{const j=await srv.req('POST','/auth/otp',{phone:t.phone});t.devCode=j.devCode||null;t.stage='code'}catch(e){t.err=e.message}t.busy=false;render();setTimeout(()=>$('#si-code')?.focus(),50)}
+async function siVerify(ctx){const t=S.si;const code=($('#si-code')?.value||'').trim(),pin=$('#si-pin')?.value||'';
+ if(!/^\d{6}$/.test(code)){t.err='Enter the 6-digit code';render();return}
+ t.busy=true;t.err='';render();
+ try{const j=await srv.req('POST','/auth/verify',{phone:t.phone,code,name:t.name,adminPin:pin||undefined});
+  if(ctx==='admin'&&j.user.role!=='staff'){t.busy=false;t.err='This number or PIN doesn’t have staff access.';render();return}
+  S.auth={token:j.token,user:j.user};store.set('auth',S.auth);t.stage='phone';t.devCode=null;t.busy=false;
+  await loadMe();toast('Signed in'+(j.user.name?' as '+j.user.name:''));
+  if(ctx==='admin')await adLoad();render();
+ }catch(e){t.busy=false;t.err=e.message;render()}}
+let RZP=null;
+async function placeOrder(){
+ const p=activeProfile(),btn=$('[data-act="place"]');if(btn){btn.disabled=true;btn.textContent='Placing order…'}
+ try{
+  await syncProfiles();
+  const j=await srv.req('POST','/orders',{spec:S.draft,profileId:p.id,profileName:p.name,measurements:p.m,adj:p.adj||{},ref:p.ref||null,locked:locked(p),notes:S.instructions});
+  if(j.payment.mode==='razorpay'){
+   if(!RZP){await loadScript('https://checkout.razorpay.com/v1/checkout.js');RZP=window.Razorpay}
+   await new Promise((res,rej)=>{const rz=new RZP({key:j.payment.keyId,order_id:j.payment.rzpOrderId,amount:j.payment.amount,currency:'INR',name:'Darzi',description:title(S.draft),prefill:{contact:'+'+j.payment.phone,name:j.payment.name||''},theme:{color:'#1E4D3F'},
+     handler:async resp=>{try{await srv.req('POST','/orders/'+j.orderId+'/pay/verify',resp);res()}catch(e){rej(e)}},modal:{ondismiss:()=>rej(new Error('Payment was cancelled. Your order is saved; you can pay from My Orders.'))}});rz.open()});
+  }
+  await loadMe();S.lastOrder=j.orderId;S.ordOk=false;S.cart=S.cart.filter(c=>JSON.stringify(c.spec)!==JSON.stringify(S.draft));store.set('cart',S.cart);go('confirmed');
+ }catch(e){toast(e.message);if(btn){btn.disabled=false;btn.textContent='Confirm & Order'}}
+}
+/* ---------------- workshop (staff) ---------------- */
+async function adLoad(){if(!isStaff())return;const A=S.ad;A.loading=true;
+ try{const[o,c,f,rp]=await Promise.all([srv.req('GET','/admin/orders'),srv.req('GET','/admin/customers'),srv.req('GET','/admin/fabrics'),srv.req('GET','/admin/reports')]);
+  A.orders=o.orders.map(mapOrder);A.customers=c.customers;A.fabrics=f.fabrics;A.reports=rp;if(!A.orders.find(x=>x.id===S.adminSel))S.adminSel=A.orders[0]?.id||null}
+ catch(e){toast(e.message)}A.loading=false;if(S.view==='admin')render()}
+const dstat=o=>o.status>=6?'Delivered':o.status===5?'In transit':'Not dispatched';
+function adOrders(list){
+ const A=S.ad,qq=A.q.trim().toLowerCase(),now=new Date();
+ const late=o=>o.status<5&&new Date(o.eta)<now;
+ const f=list.filter(o=>(A.filter==='all'||(A.filter==='open'?o.status<6:A.filter==='late'?late(o):o.status===+A.filter))&&(!qq||[o.id,o.customer,o.profileName,o.phone,CATS[o.spec.category]?.one,o.spec.fabric,o.spec.color].join(' ').toLowerCase().includes(qq)));
+ const cnt=k=>list.filter(o=>k==='open'?o.status<6:k==='late'?late(o):k==='all'?true:o.status===+k).length;
+ const sel=list.find(o=>o.id===S.adminSel)||f[0];
+ return`<div class="row" style="margin-bottom:12px"><input type="search" id="ad-q" placeholder="Search order, customer, phone, fabric…" value="${esc(A.q)}" style="max-width:360px"></div>
+ <div class="filters">${[['open','Open'],['late','Late'],...STATUSES.map((s,i)=>[String(i),s]),['all','All']].map(([k,l])=>`<button class="chip" data-act="ad-filter" data-val="${k}" aria-pressed="${A.filter===k}">${l} · ${cnt(k)}</button>`).join('')}</div>
+ ${f.length?`<div class="panel tscroll" style="padding:4px 6px"><table class="atable"><thead><tr><th>Order</th><th>Customer</th><th>Garment</th><th>Design</th><th>Due</th><th>Production status</th><th>Delivery</th></tr></thead><tbody>
+ ${f.map(o=>`<tr data-act="asel" data-id="${o.id}" class="${sel&&o.id===sel.id?'sel':''}"><td class="mono">${o.id}${o.locked?'<br><span class="pill on" style="font-size:.64rem">Fit Locked</span>':''}</td><td>${esc(o.customer)}<br><span class="small muted">${esc(o.profileName||'')}${o.phone?' · +'+esc(o.phone):''}</span></td><td>${CATS[o.spec.category]?.one||''}</td><td class="small">${esc(o.spec.color)} · ${esc(o.spec.fabric)} · ${esc(o.spec.fit)}</td><td class="small ${late(o)?'latecell':''}">${fmtDate(new Date(o.eta))}${late(o)?'<br>LATE':''}</td><td><select data-status="${o.id}" aria-label="Status for ${o.id}">${STATUSES.map((s,i)=>`<option value="${i}" ${i===o.status?'selected':''}>${s}</option>`).join('')}</select></td><td><span class="pill ${o.status>=5?'on':''}">${dstat(o)}</span></td></tr>`).join('')}
+ </tbody></table></div>`:`<div class="empty"><b>No orders here</b><p>${list.length?'Try another filter or search.':'New paid orders will appear here as soon as customers place them.'}</p></div>`}
+ ${sel?specSheet(sel):''}`;
+}
+function specSheet(sel){
+ const ev=S.ad.events[sel.id];
+ return`<div class="panel printable" id="printable" style="margin-top:20px"><div class="row" style="margin-bottom:16px"><h3>Production specification · <span class="mono">${sel.id}</span></h3><span class="spacer"></span><button class="btn btn-ghost btn-sm noprint" data-act="copy-spec">Copy</button><button class="btn btn-primary btn-sm noprint" data-act="print-spec">Print spec sheet</button></div>
+  <div class="sheet"><div class="views"><div>${garmentSVG(sel.spec,'front')}</div><div>${garmentSVG(sel.spec,'back')}</div></div>
+   <div class="stack" style="gap:14px"><dl class="spec"><dt>Customer</dt><dd>${esc(sel.customer)}${sel.profileName?' · '+esc(sel.profileName):''}${sel.phone?' · +'+esc(sel.phone):''}</dd><dt>Garment</dt><dd>${CATS[sel.spec.category].one}</dd><dt>Design</dt><dd>${esc(describe(sel.spec))}</dd><dt>Fabric</dt><dd>${esc(sel.spec.fabric)} · ${esc(sel.spec.color)} · ${esc(sel.spec.pattern)}</dd><dt>Instructions</dt><dd>${esc(sel.notes||'None')}</dd><dt>Fit</dt><dd>${sel.locked?'<span class="pill on">✓ Fit Locked · 100% Fit Guarantee</span>':'<span class="pill">Standard policy · not locked</span>'}${sel.adj&&Object.keys(sel.adj).length?' <span class="small muted">Fit memory applied: '+Object.entries(sel.adj).map(([k,v])=>k+' '+(v>0?'+':'')+v+' in').join(', ')+'</span>':''}</dd><dt>Price</dt><dd>${inr(sel.price)}${sel.paymentStatus?' · '+esc(sel.paymentStatus):''}</dd><dt>Status</dt><dd>${STATUSES[sel.status]} · ${dstat(sel)} · due ${fmtDate(new Date(sel.eta))}</dd>
+   ${sel.feedback?`<dt>Fit feedback</dt><dd>${Object.entries(sel.feedback).map(([k,v])=>`${k}: ${v}`).join(' · ')}</dd>`:''}</dl>
+   <span class="glabel">Body measurements (in)</span><div class="mgrid">${MEAS.map(([k,l])=>sel.m[k]?`<div><span>${l.replace(' (sleeve)','')}</span><b>${sel.m[k].v}${sel.m[k].c==='Low'?' *':''}</b></div>`:'').join('')}</div>
+   <span class="glabel">Finished garment (in)</span><div class="mgrid">${finished(sel.spec,sel.m,sel.adj).map(([l,v])=>`<div><span>${l}</span><b>${v.toFixed(1)}</b></div>`).join('')}</div>
+   <p class="small muted">* Low scan confidence. Confirm with the customer before cutting.</p>
+   ${ev?`<span class="glabel noprint">History</span><ul class="hist noprint">${ev.map(e=>`<li><b>${STATUSES[e.status]}</b><span class="muted small">${new Date(e.at).toLocaleString('en-IN',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}${e.note?' · '+esc(e.note):''}</span></li>`).join('')}</ul>`:''}
+   ${S.copyText?`<textarea class="copyarea noprint" id="copyarea" readonly>${esc(S.copyText)}</textarea>`:''}</div></div></div>`;
+}
+function adCustomers(){const c=S.ad.customers;return c.length?`<div class="panel tscroll" style="padding:4px 6px"><table class="atable" style="min-width:640px"><thead><tr><th>Customer</th><th>Mobile</th><th>Profiles</th><th>Orders</th><th>Spent</th><th>Last order</th><th>Joined</th></tr></thead><tbody>${c.map(u=>`<tr data-act="ad-cust" data-phone="${esc(u.phone)}"><td>${esc(u.name||'—')}</td><td class="mono small">+${esc(u.phone)}</td><td>${u.profiles}</td><td>${u.orders}</td><td class="mono">${inr(u.spent)}</td><td class="small">${u.last_order?fmtDate(new Date(u.last_order)):'—'}</td><td class="small">${fmtDate(new Date(u.created_at))}</td></tr>`).join('')}</tbody></table></div><p class="small muted" style="margin-top:8px">Tap a customer to see their orders.</p>`:`<div class="empty"><b>No customers yet</b><p>Customers appear here after they sign in.</p></div>`}
+function adFabrics(){const f=S.ad.fabrics;return`<div class="panel tscroll" style="padding:4px 6px"><table class="atable" style="min-width:620px"><thead><tr><th>Fabric</th><th>Colour</th><th>In stock (m)</th><th>Reorder at (m)</th><th>Cost / m</th><th>Status</th></tr></thead><tbody>
+ ${f.map(x=>{const low=+x.stock_m<=+x.reorder_m;return`<tr><td>${esc(x.name)}</td><td><span class="swd" style="background:${COLORS[x.color]||'#ccc'}"></span>${esc(x.color)}</td><td><input type="number" step="0.5" class="stockin" data-fab="${x.id}" data-k="stock_m" value="${+x.stock_m}" aria-label="Stock for ${esc(x.name)} ${esc(x.color)}"></td><td><input type="number" step="1" class="stockin" data-fab="${x.id}" data-k="reorder_m" value="${+x.reorder_m}" aria-label="Reorder level"></td><td class="mono">${inr(x.cost_per_m)}</td><td>${low?'<span class="pill" style="color:var(--bad)">Reorder</span>':'<span class="pill on">OK</span>'}</td></tr>`}).join('')}
+ </tbody></table></div>
+ <div class="panel stack" style="margin-top:16px;gap:10px;max-width:720px"><h3>Add fabric</h3><div class="refgrid"><input type="text" id="nf-name" placeholder="Fabric, e.g. Linen" list="fablist"><select id="nf-color">${Object.keys(COLORS).map(c=>`<option>${c}</option>`).join('')}</select><input type="number" id="nf-stock" placeholder="Stock (m)"><input type="number" id="nf-cost" placeholder="Cost per m (₹)"></div><datalist id="fablist">${Object.keys(FABRIC).map(n=>`<option value="${n}">`).join('')}</datalist><button class="btn btn-ghost" data-act="ad-addfab" style="align-self:flex-start">Add fabric</button></div>`}
+function adReports(){const R=S.ad.reports;if(!R)return'<p class="muted">Loading…</p>';const t=R.totals;const max=Math.max(1,...R.daily.map(d=>d.n));
+ const bw=100/R.daily.length;
+ return`<div class="kpis"><div><span class="small muted">Orders · 30 days</span><b>${t.orders}</b></div><div><span class="small muted">Revenue · 30 days</span><b>${inr(t.revenue)}</b></div><div><span class="small muted">Average order</span><b>${inr(t.aov)}</b></div><div><span class="small muted">Fit Locked orders</span><b>${Math.round(t.lock_rate*100)}%</b></div><div><span class="small muted">Perfect fit (feedback)</span><b>${t.feedback_n?Math.round(t.perfect_n/t.feedback_n*100)+'%':'—'}</b></div><div><span class="small muted">Late orders</span><b style="${R.late?'color:var(--bad)':''}">${R.late}</b></div></div>
+ <div class="panel" style="margin-top:16px"><h3 style="margin-bottom:12px">Orders per day · last 14 days</h3><div class="hbars" role="img" aria-label="Orders per day, last 14 days">${R.daily.map((d,i)=>`<div class="hb" title="${d.day}: ${d.n} orders, ${inr(d.revenue)}"><span class="hv">${d.n||''}</span><span class="hbar" style="height:${Math.max(2,d.n/max*100)}%;${d.n?'':'opacity:.25'}"></span><span class="hd">${i%2===0||i===R.daily.length-1?new Date(d.day).toLocaleDateString('en-IN',{day:'numeric',month:'short'}):''}</span></div>`).join('')}</div></div>
+ <div class="cards2" style="margin-top:16px"><div class="panel stack"><h3>Orders by stage</h3>${STATUSES.map((s,i)=>{const n=(R.byStatus.find(x=>x.status===i)||{}).n||0;return`<div class="price-line small"><span>${s}</span><b class="mono">${n}</b></div>`}).join('')}</div>
+ <div class="panel stack"><h3>Top garments</h3>${R.categories.length?R.categories.map(c=>`<div class="price-line small"><span>${CATS[c.cat]?.name||c.cat}</span><span class="mono">${c.n} · ${inr(c.revenue)}</span></div>`).join(''):'<p class="small muted">No orders yet.</p>'}</div></div>`}
 
 /* ---------------- render + routing ---------------- */
 let spinTimer=null;
@@ -1485,7 +1625,7 @@ document.addEventListener('click',e=>{
   case'regen':{const d={...S.draft},c=CATS[d.category];const keys=['collar','pockets','pattern','buttons'].filter(k=>c[k==='collar'?'collars':k]!==null&&(k==='pattern'||(c[k==='collar'?'collars':k]||[]).length>1));
    const k=keys[Math.floor(Math.random()*keys.length)];const list=k==='pattern'?PATTERNS:c[k==='collar'?'collars':k];const opts=list.filter(x=>x!==d[k]);d[k]=opts[Math.floor(Math.random()*opts.length)];
    const v=S.variation+1;setDraft(d,true);S.variation=v;api.call('POST','/v1/designs/{id}:render','variation '+(v+1));render();toast(`Variation ${v+1}: ${k==='collar'?(c.collarLabel||'collar').toLowerCase():k} → ${d[k]}`);break}
-  case'save-design':S.designs.unshift({spec:S.draft,at:new Date().toISOString()});api.call('POST','/v1/designs','saved');persist();toast('Design saved to My Designs');break;
+  case'save-design':{const d={spec:S.draft,at:new Date().toISOString()};S.designs.unshift(d);persist();toast('Design saved to My Designs');if(S.auth)srv.req('POST','/designs',{spec:S.draft}).then(j=>{d.id=j.design.id}).catch(e=>toast('Couldn’t save to your account: '+e.message));break}
   case'to-measure':{const p=activeProfile();S.instructions=$('#instr')?.value||S.instructions;go(p&&p.m?'review':'measure');if(p&&p.m)toast('Using '+p.name+'. Review or retake below.');break}
   case'review-active':S.reviewId=activeProfile().id;go('review');break;
   case'consent2':S.m.keep=a.checked;break;
@@ -1514,20 +1654,18 @@ document.addEventListener('click',e=>{
   case'spin':if(spinTimer){stopSpin();render()}else{S.view3d.auto=true;render();spinTimer=setInterval(()=>setAngle((S.view3d.angle+3)%360),40)}break;
   case'add-cart':S.cart.push({spec:S.draft,pid:S.active});persist();render();toast('Added to cart');break;
   case'ord-ok':S.ordOk=a.checked;render();break;
-  case'place':{const p=activeProfile(),c=CATS[S.draft.category];const id='DZ-'+(24830+S.orders.length+Math.floor(Math.random()*40));
-   S.orders.unshift({id,customer:'Aarav Mehta',profileId:p.id,profileName:p.name,spec:S.draft,m:JSON.parse(JSON.stringify(p.m)),price:price(S.draft),created:new Date().toISOString(),status:1,notes:S.instructions,locked:locked(p),adj:{...(p.adj||{})},ref:p.ref||null,eta:addDays(today,c.days+3).toISOString()});
-   api.call('POST','/v1/payments/intents',inr(price(S.draft)));api.call('POST','/v1/orders',id);S.lastOrder=id;S.ordOk=false;persist();go('confirmed');break}
+  case'place':if(!S.auth){toast('Please sign in first');break}placeOrder();break;
   case'filter':S.filter=a.dataset.val;if(a.dataset.goto)go(a.dataset.goto);else render();break;
   case'cart-rm':S.cart.splice(+a.dataset.i,1);persist();render();break;
   case'cart-order':{const it=S.cart[+a.dataset.i];setDraft(it.spec);if(prof(it.pid))S.active=it.pid;S.cart.splice(+a.dataset.i,1);persist();go('order');break}
-  case'dtab':S.dtab=a.dataset.val;S.pendingDel=null;if(S.view!=='account')go('account');else render();break;
+  case'dtab':S.dtab=a.dataset.val;S.pendingDel=null;if(S.dtab==='updates'&&S.auth&&S.notifs.some(n=>!n.read)){srv.req('POST','/notifications/read').then(()=>{S.notifs.forEach(n=>n.read=true);updateBadges();if(S.view==='account')render()}).catch(()=>{})}if(S.view!=='account')go('account');else render();break;
   case'open-design':setDraft(S.designs[+a.dataset.i].spec);go('design');break;
   case'review-prof':S.reviewId=a.dataset.id;go('review');break;
   case'scan-prof':S.m={...S.m,stage:'choose',profileId:a.dataset.id};go('measure');break;
   case'activate':S.active=a.dataset.id;persist();render();toast(prof(S.active).name+' will be used for orders');break;
   case'del-prof':S.pendingDel=a.dataset.id;render();break;
   case'del-prof-no':S.pendingDel=null;render();break;
-  case'del-prof-yes':{const id=a.dataset.id;if(S.profiles.length<2){toast('Keep at least one profile');break}const n=prof(id).name;S.profiles=S.profiles.filter(p=>p.id!==id);if(S.active===id)S.active=S.profiles[0].id;S.pendingDel=null;api.call('DELETE','/v1/profiles/'+id,'profile and images');persist();render();toast(n+' deleted');break}
+  case'del-prof-yes':{const id=a.dataset.id;if(S.profiles.length<2){toast('Keep at least one profile');break}const n=prof(id).name;S.profiles=S.profiles.filter(p=>p.id!==id);if(S.active===id)S.active=S.profiles[0].id;S.pendingDel=null;if(S.auth){delete sent[id];srv.req('DELETE','/profiles/'+encodeURIComponent(id)).catch(e=>toast(e.message))}api.call('DELETE','/v1/profiles/'+id,'profile and images');persist();render();toast(n+' deleted');break}
   case'add-prof':{const v=$('#add-prof').value.trim();if(!v){toast('Give the profile a name');break}S.profiles.push({id:'p'+Date.now(),name:v,rel:'Family',fit:'Tailored',sizes:'',m:null,photos:false,updated:new Date().toISOString()});api.call('POST','/v1/profiles',v);persist();render();toast(v+' added');break}
   case'verify':{const p=prof(S.reviewId)||activeProfile();const x=p.m[a.dataset.k];x.c='Verified';x.u=true;p.updated=new Date().toISOString();api.call('PATCH','/v1/profiles/'+p.id,a.dataset.k+' verified');persist();render();const sc=fitScore(p).score;toast(sc===100?'Fit Locked. 100% Fit Guarantee applies.':'Confirmed. Fit score '+sc+'%');break}
   case'ref-fix':{const p=prof(S.reviewId)||activeProfile();const k=a.dataset.k;p.m[k]={v:+a.dataset.v,c:'Edited',u:p.m[k].u};persist();render();toast('Updated from your shirt. Fit score '+fitScore(p).score+'%');break}
@@ -1535,10 +1673,22 @@ document.addEventListener('click',e=>{
   case'fb':{const o=a.dataset.o;S.fb[o]={...(S.fb[o]||{}),[a.dataset.a]:a.dataset.val};render();break}
   case'fb-send':{const o=S.orders.find(x=>x.id===a.dataset.o),f=S.fb[o.id],p=prof(o.profileId);o.feedback=f;
    if(p){p.adj=p.adj||{};Object.entries(f).forEach(([k,v])=>{if(v!=='Perfect'){p.adj[k]=Math.round(((p.adj[k]||0)+(v==='Tight'?.5:-.5))*10)/10;if(!p.adj[k])delete p.adj[k]}})}
-   api.call('POST','/v1/orders/'+o.id+'/fit-feedback',Object.entries(f).map(([k,v])=>k+':'+v).join(' '));persist();render();toast(Object.values(f).some(v=>v!=='Perfect')?'Free alteration booked. Fit memory updated.':'Glad it fits perfectly');break}
-  case'staff-in':S.staff=true;api.call('GET','/v1/admin/orders','staff role');render();break;
-  case'asel':S.adminSel=a.dataset.id;S.copyText=null;render();break;
-  case'copy-spec':{const o=S.orders.find(x=>x.id===S.adminSel)||S.orders[0];const txt=specText(o);api.call('GET','/v1/admin/orders/'+o.id+'/spec-sheet','text');
+   if(S.auth)srv.req('POST','/orders/'+o.id+'/feedback',{feedback:f}).then(loadMe).then(render).catch(e=>toast(e.message));api.call('POST','/v1/orders/'+o.id+'/fit-feedback',Object.entries(f).map(([k,v])=>k+':'+v).join(' '));persist();render();toast(Object.values(f).some(v=>v!=='Perfect')?'Free alteration booked. Fit memory updated.':'Glad it fits perfectly');break}
+  case'staff-demo':S.staffDemo=true;S.ad.tab='orders';render();break;
+  case'staff-demo-off':S.staffDemo=false;render();break;
+  case'si-send':siSend();break;
+  case'si-back':S.si.stage='phone';S.si.err='';render();break;
+  case'si-verify':siVerify(a.dataset.ctx);break;
+  case'sign-out':if(S.auth){signOut();toast('Signed out')}else{S.dtab='designs';go('account')}break;
+  case'acc-save':srv.req('PATCH','/me',{name:$('#acc-name').value.trim(),email:$('#acc-email').value.trim(),address:$('#acc-addr').value.trim()}).then(j=>{S.auth.user=j.user;store.set('auth',S.auth);render();toast('Details saved')}).catch(e=>toast(e.message));break;
+  case'ad-tab':S.ad.tab=a.dataset.val;render();break;
+  case'ad-filter':S.ad.filter=a.dataset.val;render();break;
+  case'ad-refresh':adLoad();toast('Refreshing');break;
+  case'ad-cust':S.ad.tab='orders';S.ad.filter='all';S.ad.q=a.dataset.phone;render();break;
+  case'print-spec':document.body.classList.add('printing');setTimeout(()=>{window.print();setTimeout(()=>document.body.classList.remove('printing'),500)},50);break;
+  case'ad-addfab':{const b={name:$('#nf-name').value.trim(),color:$('#nf-color').value,stock_m:+$('#nf-stock').value||0,cost_per_m:+$('#nf-cost').value||0};if(!b.name){toast('Enter the fabric name');break}srv.req('POST','/admin/fabrics',b).then(()=>adLoad()).then(()=>toast('Fabric saved')).catch(e=>toast(e.message));break}
+  case'asel':S.adminSel=a.dataset.id;S.copyText=null;render();if(isStaff()&&!S.staffDemo&&!S.ad.events[a.dataset.id])srv.req('GET','/admin/orders/'+a.dataset.id+'/events').then(j=>{S.ad.events[a.dataset.id]=j.events;if(S.view==='admin')render()}).catch(()=>{});break;
+  case'copy-spec':{const L=isStaff()&&!S.staffDemo?S.ad.orders:S.orders;const o=L.find(x=>x.id===S.adminSel)||L[0];const txt=specText(o);api.call('GET','/v1/admin/orders/'+o.id+'/spec-sheet','text');
    const fallback=()=>{S.copyText=txt;render();const t=$('#copyarea');t&&t.select();toast('Select all and copy the spec sheet below')};
    try{navigator.clipboard.writeText(txt).then(()=>toast('Spec sheet copied'),fallback)}catch(err){fallback()}break}
  }
@@ -1548,8 +1698,10 @@ document.addEventListener('change',e=>{
  if(t.dataset.meas){const p=prof(S.reviewId)||activeProfile();const v=parseFloat(t.value);if(isFinite(v)&&v>0){p.m[t.dataset.meas]={v:Math.round(v*10)/10,c:'Edited',u:p.m[t.dataset.meas].u};p.updated=new Date().toISOString();persist();render();toast('Updated. Edited values are made exactly as entered.')}}
  if(t.dataset.ref){const p=prof(S.reviewId)||activeProfile();p.ref={...(p.ref||{}),[t.dataset.ref]:t.value};api.call('PATCH','/v1/profiles/'+p.id,'reference garment '+t.dataset.ref);persist();render();const nx=REF.find(([k])=>!p.ref[k]);if(nx)$('#ref-'+nx[0])?.focus()}
  if(t.id==='m-prof'){const nm=$('#np-name');if(t.value==='__new'){nm.hidden=false;nm.focus()}else{nm.hidden=true;S.m.profileId=t.value;prefillHeight();render()}}
+ if(t.classList&&t.classList.contains('stockin')){const b={};b[t.dataset.k]=+t.value;srv.req('PATCH','/admin/fabrics/'+t.dataset.fab,b).then(j=>{const i=S.ad.fabrics.findIndex(x=>x.id==t.dataset.fab);S.ad.fabrics[i]=j.fabric;render();toast('Stock updated')}).catch(e=>toast(e.message))}
  if(t.id==='instr')S.instructions=t.value;
  if(t.id==='ord-prof'){S.active=t.value;persist();render()}
+ if(t.dataset.status&&isStaff()&&!S.staffDemo){const id=t.dataset.status,st=+t.value;srv.req('PATCH','/admin/orders/'+id,{status:st}).then(j=>{const i=S.ad.orders.findIndex(x=>x.id===id);S.ad.orders[i]={...S.ad.orders[i],...mapOrder(j.order)};delete S.ad.events[id];render();toast(id+' → '+STATUSES[st]+'. Customer notified.')}).catch(e=>{toast(e.message);render()});return}
  if(t.dataset.status){const o=S.orders.find(x=>x.id===t.dataset.status);o.status=+t.value;api.call('PATCH','/v1/admin/orders/'+o.id+'/status',STATUSES[o.status]);persist();render();toast(o.id+' → '+STATUSES[o.status])}
  if(t.dataset.upload&&t.files&&t.files[0]){const r=new FileReader();r.onload=()=>{if(/^cap\d$/.test(t.dataset.upload)){readWho();readHeight();S.m.caps[+t.dataset.upload.slice(3)]=r.result;api.call('POST','/v1/measurement-sessions/{id}/captures','uploaded photo')}else{S.refs[t.dataset.upload]=r.result;api.call('POST','/v1/designs:parse','reference image');toast('Image added. The studio will use it to guide your design.')}render()};r.readAsDataURL(t.files[0])}
 });
@@ -1562,11 +1714,14 @@ function runSearch(){const q=$('#q').value.trim();const out=$('#sout');
  const r=parseSearch(q);
  out.innerHTML=`${r.u.length?`<div class="understood"><span class="muted">Showing</span>${r.u.map(x=>`<span class="tag">${esc(x)}</span>`).join('')}</div>`:''}${r.items.length?`<div class="sres">${r.items.slice(0,9).map(card).join('')}</div>`:`<div class="empty"><b>No ready designs match that yet</b><p>Describe it in the studio and we'll make it from scratch.</p><button class="btn btn-primary" data-act="search-studio">Design “${esc(q)}”</button></div>`}`;
 }
+document.addEventListener('input',e=>{if(e.target.id==='ad-q'){S.ad.q=e.target.value;clearTimeout(adQ);adQ=setTimeout(()=>{render();const el=$('#ad-q');if(el){el.focus();el.setSelectionRange(el.value.length,el.value.length)}},250)}});let adQ=null;
 $('#q').addEventListener('input',()=>{clearTimeout(runSearch.t);runSearch.t=setTimeout(()=>{runSearch();if($('#q').value.trim().length>3)api.call('GET','/v1/catalog/search?q=',$('#q').value.trim())},220)});
 $('#search').addEventListener('click',e=>{if(e.target.id==='search')$('#search').hidden=true;const s=e.target.closest('[data-sq]');if(s){$('#q').value=s.dataset.sq;runSearch()}
  if(e.target.closest('[data-act="search-studio"]')){S.prompt=$('#q').value;const{ch,u}=parsePrompt(S.prompt);const base=ch.category?defaultSpec(ch.category):S.draft;setDraft({...base,...ch},true);S.understood=u;$('#search').hidden=true;go('design')}});
 
 const h0=(location.hash||'').slice(1);if(V[h0])S.view=h0;
+srv.req('GET','/health').then(j=>{S.health=j;if(S.view==='order')render()}).catch(()=>{});
+if(S.auth){loadMe().then(()=>{if(isStaff())return adLoad()}).then(render).catch(e=>console.warn(e))}
 window.addEventListener('hashchange',()=>{const h=location.hash.slice(1);if(V[h]&&h!==S.view)go(h)});
 render();
 </script>
