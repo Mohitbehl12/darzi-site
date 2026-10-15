@@ -1,0 +1,26 @@
+# Render Blueprint: deploys this repo as a free static site.
+# Render dashboard → New → Blueprint → pick this repo → Apply.
+services:
+  - type: web
+    name: darzi-test
+    runtime: static
+    buildCommand: echo "No build step - static site"
+    staticPublishPath: .
+    pullRequestPreviewsEnabled: true
+    headers:
+      - path: /*
+        name: X-Robots-Tag
+        value: noindex, nofollow
+      - path: /*
+        name: X-Frame-Options
+        value: SAMEORIGIN
+      - path: /*
+        name: Referrer-Policy
+        value: strict-origin-when-cross-origin
+      - path: /*
+        name: Permissions-Policy
+        value: camera=(self), microphone=(), geolocation=()
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
