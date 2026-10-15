@@ -7,8 +7,9 @@ const { pool, migrate } = require('./db');
 const PRICING = require('./pricing.json');
 
 const PORT = process.env.PORT || 3000;
-const JWT_SECRET = process.env.JWT_SECRET;
-if (!JWT_SECRET) { console.error('JWT_SECRET is required'); process.exit(1); }
+if (!process.env.DATABASE_URL) { console.error('DATABASE_URL is not set. Add the Internal Database URL in Render > darzi-api > Environment.'); process.exit(1); }
+// Signing key: JWT_SECRET if set, otherwise derived from the (secret) database URL so no extra secret needs handling.
+const JWT_SECRET = process.env.JWT_SECRET || crypto.createHash('sha256').update('darzi-jwt:' + process.env.DATABASE_URL).digest('hex');
 const ORIGINS = (process.env.ALLOWED_ORIGINS || 'https://darzi-test.onrender.com,http://localhost:8080')
   .split(',').map(s => s.trim()).filter(Boolean);
 const normPhone = p => { let d = String(p || '').replace(/\D/g, ''); if (d.length === 10) d = '91' + d; return d.length >= 11 && d.length <= 15 ? d : null; };
