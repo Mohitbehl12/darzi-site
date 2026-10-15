@@ -289,6 +289,10 @@ textarea:focus,input:focus,select:focus{outline:none;border-color:var(--accent);
 .livecam video.mirror{transform:scaleX(-1)}
 .livecam .guide{z-index:1}.livecam .hud,.livecam .count{z-index:2}
 .livecam .count{pointer-events:none}
+.livecam canvas#skel{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none}
+.livecam.good{box-shadow:0 0 0 4px #2D7A4D}
+.livecam.adjust{box-shadow:0 0 0 4px #E4B12B}
+.srctag{display:block;margin-top:4px;font-size:.68rem;color:var(--muted);font-family:var(--mono)}
 .flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:3}
 .flash.on{animation:fl .5s ease-out}
 @keyframes fl{0%{opacity:.85}100%{opacity:0}}
@@ -407,7 +411,7 @@ textarea:focus,input:focus,select:focus{outline:none;border-color:var(--accent);
 .sinput input{font-size:1.1rem;padding:13px 15px}
 .sres{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 @media (max-width:600px){.sres{grid-template-columns:1fr 1fr}}
-.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:11px 18px;border-radius:999px;font-size:.9rem;z-index:80;box-shadow:var(--shadow);max-width:calc(100% - 32px)}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:11px 18px;border-radius:14px;font-size:.9rem;z-index:80;text-align:center;box-shadow:var(--shadow);max-width:calc(100% - 32px)}
 .empty{border:1.5px dashed var(--line);border-radius:var(--r);padding:28px;text-align:center;color:var(--muted);display:flex;flex-direction:column;gap:12px;align-items:center}
 .inline-confirm{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:.86rem}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
@@ -991,8 +995,8 @@ function figure(view){
  return`<svg viewBox="0 0 200 360" aria-hidden="true"><g fill="rgba(125,195,167,.12)" stroke="#7DC3A7" stroke-width="2" stroke-dasharray="6 5">${g}</g>${!side?'<path d="M64,354 L136,354" stroke="#E4B12B" stroke-width="2"/><text x="100" y="352" fill="#E4B12B" font-family="DM Mono,monospace" font-size="8" text-anchor="middle" dy="-5">feet shoulder-width</text>':''}</svg>`;
 }
 const POSES=[
- {k:'front',t:'Face the camera',n:'Front',instr:'Feet apart, arms slightly away from your body. Fit your whole body inside the outline.',say:'Step back until your whole body fits in the outline. Feet apart, arms slightly out. Photo in eight seconds.'},
- {k:'side',t:'Turn to your right',n:'Side',instr:'Stand sideways, arms relaxed at your sides, look straight ahead.',say:'Great. Now turn to your right side and stand tall. Photo in five seconds.'}];
+ {k:'front',t:'Face the camera',n:'Front',instr:'Feet apart, arms slightly away from your body. Fit your whole body inside the outline.',say:'Face the camera and step back until I can see you from head to toe.'},
+ {k:'side',t:'Turn to your right',n:'Side',instr:'Stand sideways, arms relaxed at your sides, look straight ahead.',say:'Great. Now turn to your right side and stand tall.'}];
 function heightField(){const M=S.m;return`<div class="stack" style="gap:8px"><span class="glabel">Height</span><div class="row">${M.unit==='ft'
  ?`<select id="h-ft" aria-label="Feet" class="hsel">${[4,5,6,7].map(f=>`<option ${f===M.ft?'selected':''}>${f}</option>`).join('')}</select><span>ft</span><select id="h-in" aria-label="Inches" class="hsel">${[...Array(12).keys()].map(i=>`<option ${i===M.inch?'selected':''}>${i}</option>`).join('')}</select><span>in</span>`
  :`<input type="number" id="h-cm" inputmode="numeric" value="${M.cm||''}" placeholder="e.g. 172" style="max-width:120px"><span>cm</span>`}
@@ -1026,7 +1030,7 @@ V.measure=()=>{
    ${whoField()}${heightField()}
    <div class="stack" style="gap:8px"><span class="glabel">Before you tap start</span>
    <ul class="checklist"><li>Lean your phone against a wall or bottle at waist height.</li><li>Stand about 2–3 steps back in a bright room.</li><li>Wear fitted clothes. You’ll hear what to do.</li></ul></div>
-   <button class="btn btn-primary btn-lg" data-act="m-go">Start camera</button>
+   <button class="btn btn-primary btn-lg" data-act="m-go">Start camera</button><p class="small muted" id="body-status">${BODY.ready?'✓ Body detection ready':BODY.failed?'Body detection unavailable on this device. The scan will use a timer instead.':'Loading body detection…'}</p>
    <p class="small muted">By tapping Start camera you agree to body capture for measurement. Photos are deleted right after your numbers are calculated. <label style="display:inline-flex;gap:6px;align-items:center;cursor:pointer"><input type="checkbox" id="keep" data-act="consent2" ${M.keep?'checked':''} style="accent-color:var(--accent)"> Keep my photos instead</label></p>
    <div class="row"><button class="linkbtn small" data-act="m-back">← Other ways to measure</button></div>
   </div>
@@ -1034,11 +1038,11 @@ V.measure=()=>{
  }else if(M.stage==='live'){
   const P=POSES[M.step];
   body=`<div class="live">
-   <div class="cam livecam"><video id="camv" playsinline muted autoplay></video><div class="guide" id="guide">${figure(P.k==='side'?'side':'front')}</div><span class="corner c1"></span><span class="corner c2"></span><span class="corner c3"></span><span class="corner c4"></span>
+   <div class="cam livecam"><video id="camv" playsinline muted autoplay></video><div class="guide" id="guide">${figure(P.k==='side'?'side':'front')}</div><canvas id="skel"></canvas><span class="corner c1"></span><span class="corner c2"></span><span class="corner c3"></span><span class="corner c4"></span>
     <div class="hud"><span id="pose-n">${M.step+1} OF ${POSES.length} · ${P.n.toUpperCase()}</span><span id="livestat">OPENING CAMERA…</span></div>
     <div class="count" id="cd"></div><div class="flash" id="flash"></div></div>
    <div class="stack livepanel" style="gap:14px">
-    <p class="instr" id="pose-t">${P.t}</p><p class="muted" id="pose-i">${P.instr}</p>
+    <p class="instr" id="pose-t">${P.t}</p><p class="muted" id="pose-i">${P.instr}</p><button class="btn btn-tape" id="btn-anyway" data-act="m-anyway" hidden>Take the photo now</button>
     <div class="row"><button class="btn btn-ghost" data-act="m-pause" id="btn-pause">Pause</button><button class="btn btn-ghost" data-act="m-redo">Redo this photo</button><button class="btn btn-ghost" data-act="m-switch">Switch camera</button><button class="btn btn-ghost" data-act="m-voice" id="btn-voice">${M.voice?'Voice on':'Voice off'}</button></div>
     <div class="thumbs" id="thumbs">${thumbsHTML()}</div>
     <button class="linkbtn small" data-act="m-cancel" style="align-self:flex-start">Cancel scan</button>
@@ -1062,7 +1066,7 @@ V.measure=()=>{
    <div class="row"><button class="btn btn-primary btn-lg" data-act="m-quick-go">Get my measurements</button><button class="linkbtn small" data-act="m-back">← Other ways</button></div>
    <p class="small muted">This gives a good starting point. On the next screen, checking 3–4 flagged numbers with a tape locks a perfect fit.</p></div>`;
  }else{
-  const items=['Finding your outline','Matching your height to the photos','Computing 18 measurements','Scoring confidence',M.keep?'Saving encrypted photos':'Deleting your photos'];
+  const items=['Loading body detection','Reading your front photo','Reading your side photo','Calculating 18 measurements',M.keep?'Saving encrypted photos':'Deleting your photos'];
   body=`<div class="proc"><div class="spinner"></div><h3>Calculating your measurements</h3><ol>${items.map((t,i)=>`<li class="${i<M.proc?'on':''}"><span class="dot"></span>${t}</li>`).join('')}</ol></div>`;
  }
  const sub={choose:'Pick the way that suits you. All three lead to the same review screen.',scan:'Two photos, taken automatically. You’ll hear each step.',live:'Hands-free: the photo is taken for you after the countdown.',quick:'Four quick answers, no camera.',upload:'Front and side photos from your gallery.',camfail:'No problem, there are other ways to measure.'}[M.stage]||'';
@@ -1077,7 +1081,7 @@ V.review=()=>{
  if(!p||!p.m)return`<div class="wrap page">${stepper('review')}<div class="empty"><b>No measurements yet for ${esc(p?p.name:'this profile')}</b><p>Capture them with your phone or enter them manually.</p><button class="btn btn-primary" data-go="measure">Start measuring</button></div></div>`;
  const F=fitScore(p),open=new Set(F.unc.filter(([k])=>!['Verified','Edited'].includes(p.m[k].c)).map(([k])=>k));
  let rows='',g='';
- MEAS.forEach(([k,l,grp])=>{if(grp!==g){g=grp;rows+=`<tr class="grp"><td colspan="4">${grp}</td></tr>`}const x=p.m[k];rows+=`<tr${open.has(k)?' class="needs"':''}><td>${l}${open.has(k)?`<br><span class="small tip">${esc(TAPE[k]||'Measure with a soft tape, snug but not tight.')}</span>`:''}</td><td><input type="number" step="0.1" id="m-${k}" value="${x.v}" data-meas="${k}" aria-label="${l} in inches"> <span class="small muted">in</span><div class="cm">${cm(x.v)} cm</div></td><td><span class="conf ${x.c}">${x.c}</span></td><td>${open.has(k)?`<button class="btn btn-sm btn-ghost" data-act="verify" data-k="${k}">Tape matches</button>`:''}</td></tr>`});
+ MEAS.forEach(([k,l,grp])=>{if(grp!==g){g=grp;rows+=`<tr class="grp"><td colspan="4">${grp}</td></tr>`}const x=p.m[k];rows+=`<tr${open.has(k)?' class="needs"':''}><td>${l}${open.has(k)?`<br><span class="small tip">${esc(TAPE[k]||'Measure with a soft tape, snug but not tight.')}</span>`:''}</td><td><input type="number" step="0.1" id="m-${k}" value="${x.v}" data-meas="${k}" aria-label="${l} in inches"> <span class="small muted">in</span><div class="cm">${cm(x.v)} cm</div></td><td><span class="conf ${x.c}">${x.c}</span>${x.src?`<span class="srctag">${x.src==='photo'?'from photo':x.src==='you'?'you entered':'estimated'}</span>`:''}</td><td>${open.has(k)?`<button class="btn btn-sm btn-ghost" data-act="verify" data-k="${k}">Tape matches</button>`:''}</td></tr>`});
  const meter=`<div class="fitmeter ${F.score===100?'lock':''}"><div class="row"><span class="fitnum">${F.score}%</span><div><b>${F.score===100?'Fit Locked':'Fit score'}</b><p class="small muted">${F.score===100?'Covered by the 100% Fit Guarantee.':'Complete the steps below to lock 100% fit.'}</p></div></div>
   <div class="bar"><span style="width:${F.score}%"></span></div>
   <ul class="gates">${F.gates.map(([t,v,s])=>`<li class="${v>=1?'ok':''}"><span class="gi">${v>=1?'✓':Math.round(v*25)}</span><div><b>${t}</b><span class="small muted">${s}</span></div></li>`).join('')}</ul></div>`;
@@ -1255,7 +1259,7 @@ function setDraft(s,keepPrompt){S.draft=normalize(s);S.variation=0;persist();if(
 /* ---------------- live camera: hands-free two-photo scan ---------------- */
 const CAM={stream:null,timer:null,facing:'user'};
 function say(t){if(!S.m.voice)return;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='en-IN';u.rate=1;speechSynthesis.speak(u)}catch(e){}}
-function stopCamera(){clearInterval(CAM.timer);CAM.timer=null;try{speechSynthesis.cancel()}catch(e){}if(CAM.stream){CAM.stream.getTracks().forEach(t=>t.stop());CAM.stream=null}}
+function stopCamera(){clearInterval(CAM.timer);CAM.timer=null;cancelAnimationFrame(LIVE.raf);clearInterval(LIVE.cd);LIVE.counting=false;try{speechSynthesis.cancel()}catch(e){}if(CAM.stream){CAM.stream.getTracks().forEach(t=>t.stop());CAM.stream=null}}
 function camFail(kind){stopCamera();S.m.stage='camfail';S.m.fail=kind;api.call('POST','/v1/measurement-sessions','camera failed: '+kind);render()}
 async function startCamera(){
  const st=()=>$('#livestat');
@@ -1275,29 +1279,156 @@ async function startCamera(){
  api.call('POST','/v1/measurement-sessions','camera on, keep_images='+S.m.keep);
  runPose();
 }
+/* ---- body detection (MediaPipe Pose, self-hosted in /vendor) ---- */
+const BODY={pose:null,ready:false,failed:false,pending:null,loading:null};
+function loadScript(src){return new Promise((res,rej)=>{if(document.querySelector('script[src="'+src+'"]'))return res();const el=document.createElement('script');el.src=src;el.onload=res;el.onerror=rej;document.head.appendChild(el)})}
+function initBody(){
+ if(BODY.ready)return Promise.resolve(true);if(BODY.failed)return Promise.resolve(false);if(BODY.loading)return BODY.loading;
+ BODY.loading=(async()=>{try{
+  await loadScript('vendor/mediapipe-pose/pose.js');
+  const p=new Pose({locateFile:f=>'vendor/mediapipe-pose/'+f});
+  p.setOptions({modelComplexity:0,smoothLandmarks:true,enableSegmentation:true,smoothSegmentation:false,minDetectionConfidence:.5,minTrackingConfidence:.5});
+  p.onResults(r=>{const f=BODY.pending;BODY.pending=null;f&&f(r)});
+  await p.initialize();BODY.pose=p;BODY.ready=true;api.call('GET','/v1/models/pose','loaded on device');
+ }catch(e){console.warn('Body detection unavailable',e);BODY.failed=true}
+ const st=$('#body-status');if(st)st.textContent=BODY.ready?'✓ Body detection ready':'Body detection unavailable on this device. The scan will use a timer instead.';
+ return BODY.ready})();
+ return BODY.loading}
+function detect(img){return new Promise(res=>{let done=false;const fin=v=>{if(!done){done=true;res(v)}};BODY.pending=fin;setTimeout(()=>fin(null),5000);BODY.pose.send({image:img}).catch(()=>fin(null))})}
+const vis=p=>p&&(p.visibility==null||p.visibility>.5);
+function assess(lm,k){
+ if(!lm)return{ok:false,msg:'Step into the frame'};
+ const g=i=>lm[i],nose=g(0),feet=[27,28,29,30].map(g),feetY=Math.max(...feet.map(p=>p.y));
+ if(!vis(nose)||nose.y<.03)return{ok:false,msg:'Step back so your head is in the frame'};
+ if(!feet.some(vis)||feetY>.985)return{ok:false,msg:'Step back. I can’t see your feet'};
+ const span=feetY-nose.y;
+ if(span>.9)return{ok:false,msg:'Step back a little'};
+ if(span<.5)return{ok:false,msg:'Come a little closer'};
+ const cx=(g(23).x+g(24).x)/2;if(cx<.28||cx>.72)return{ok:false,msg:'Move to the middle of the frame'};
+ const torso=Math.abs((g(23).y+g(24).y)/2-(g(11).y+g(12).y)/2)||.2,shw=Math.abs(g(11).x-g(12).x);
+ if(k==='front'){
+  if(shw<torso*.42)return{ok:false,msg:'Turn to face the camera'};
+  if(Math.min(Math.abs(g(15).x-g(23).x),Math.abs(g(16).x-g(24).x))<torso*.16)return{ok:false,msg:'Move your arms slightly away from your body'};
+  if(Math.abs(g(27).x-g(28).x)<shw*.3)return{ok:false,msg:'Place your feet a little apart'};
+ }else if(shw>torso*.32)return{ok:false,msg:'Turn sideways, to your right'};
+ return{ok:true,msg:'Perfect. Hold still'};
+}
+const BONES=[[11,12],[11,13],[13,15],[12,14],[14,16],[11,23],[12,24],[23,24],[23,25],[25,27],[24,26],[26,28],[27,29],[28,30]];
+function drawSkel(lm,ok){
+ const c=$('#skel'),v=$('#camv');if(!c||!v)return;const W=c.clientWidth,H=c.clientHeight;if(c.width!==W||c.height!==H){c.width=W;c.height=H}
+ const x=c.getContext('2d');x.clearRect(0,0,W,H);if(!lm||!v.videoWidth)return;
+ const sc=Math.max(W/v.videoWidth,H/v.videoHeight),ox=(W-v.videoWidth*sc)/2,oy=(H-v.videoHeight*sc)/2,mir=CAM.facing==='user';
+ const P=i=>{let px=lm[i].x*v.videoWidth*sc+ox;if(mir)px=W-px;return[px,lm[i].y*v.videoHeight*sc+oy]};
+ x.lineWidth=4;x.lineCap='round';x.strokeStyle=ok?'#7DC3A7':'#E4B12B';x.fillStyle=x.strokeStyle;
+ BONES.forEach(([a,b])=>{if(vis(lm[a])&&vis(lm[b])){const p=P(a),q=P(b);x.beginPath();x.moveTo(p[0],p[1]);x.lineTo(q[0],q[1]);x.stroke()}});
+ [0,11,12,13,14,15,16,23,24,25,26,27,28].forEach(i=>{if(vis(lm[i])){const p=P(i);x.beginPath();x.arc(p[0],p[1],5,0,7);x.fill()}});
+}
+const LIVE={raf:0,busy:false,lastT:0,okSince:0,counting:false,cd:null,lastMsg:'',lastSay:0,started:0};
 function setLive(){const M=S.m,P=POSES[M.step];
  const set=(id,t)=>{const el=$('#'+id);if(el)el.textContent=t};
  set('pose-t',P.t);set('pose-i',P.instr);set('pose-n',`${M.step+1} OF ${POSES.length} · ${P.n.toUpperCase()}`);
  const g=$('#guide');if(g)g.innerHTML=figure(P.k==='side'?'side':'front');const th=$('#thumbs');if(th)th.innerHTML=thumbsHTML()}
+function anyway(show){const b=$('#btn-anyway');if(b)b.hidden=!show}
+function guide(a){
+ const st=$('#livestat'),t=$('#pose-t'),cam=$('.livecam');
+ if(st)st.textContent=a.ok?'IN POSITION':'ADJUST';if(t&&!LIVE.counting)t.textContent=a.msg;
+ if(cam){cam.classList.toggle('good',a.ok);cam.classList.toggle('adjust',!a.ok)}
+ const now=Date.now();if(a.msg!==LIVE.lastMsg&&now-LIVE.lastSay>2800&&!LIVE.counting){LIVE.lastMsg=a.msg;LIVE.lastSay=now;say(a.msg)}
+}
+function cancelCount(){clearInterval(LIVE.cd);LIVE.cd=null;LIVE.counting=false;const cd=$('#cd');if(cd)cd.textContent=''}
+function startCount(){LIVE.counting=true;let n=3;const cd=$('#cd'),t=$('#pose-t');if(cd)cd.textContent=n;if(t)t.textContent='Hold still';say('Hold still');
+ LIVE.cd=setInterval(()=>{if(S.m.paused)return;n--;try{navigator.vibrate&&navigator.vibrate(30)}catch(e){}if(n>0){if(cd)cd.textContent=n;return}cancelCount();snap()},1000)}
+function timedCountdown(){
+ const M=S.m;let n=M.step===0?8:5;const cd=$('#cd'),st=$('#livestat');
+ const show=()=>{if(cd)cd.textContent=n;if(st)st.textContent=n<=3?'HOLD STILL':'GET INTO POSITION'};show();
+ clearInterval(CAM.timer);CAM.timer=setInterval(()=>{if(M.paused)return;n--;if(n>0){show();return}clearInterval(CAM.timer);if(cd)cd.textContent='';snap()},1000);
+}
 function runPose(){
  const M=S.m;M.paused=false;const bp=$('#btn-pause');if(bp)bp.textContent='Pause';
- setLive();say(POSES[M.step].say);
- let n=M.step===0?8:5;const cd=$('#cd'),st=$('#livestat');
- const show=()=>{if(cd)cd.textContent=n;if(st)st.textContent=n<=3?'HOLD STILL':'GET INTO POSITION'};show();
- clearInterval(CAM.timer);
- CAM.timer=setInterval(()=>{if(M.paused)return;n--;if(n>0){show();if(n<=3)try{navigator.vibrate&&navigator.vibrate(30)}catch(e){};return}
-  clearInterval(CAM.timer);if(cd)cd.textContent='';snap()},1000);
+ cancelAnimationFrame(LIVE.raf);cancelCount();clearInterval(CAM.timer);anyway(false);
+ setLive();say(POSES[M.step].say);LIVE.lastSay=Date.now();LIVE.lastMsg='';LIVE.okSince=0;LIVE.started=Date.now();
+ if(!BODY.ready){timedCountdown();return}
+ const v=$('#camv');
+ const tick=async t=>{
+  if(!CAM.stream||S.m.stage!=='live')return;LIVE.raf=requestAnimationFrame(tick);
+  if(M.paused||LIVE.busy||t-LIVE.lastT<130||!v||!v.videoWidth)return;
+  LIVE.busy=true;LIVE.lastT=t;const r=await detect(v);LIVE.busy=false;
+  if(S.m.stage!=='live'||!CAM.stream)return;
+  const lm=r&&r.poseLandmarks,a=assess(lm,POSES[M.step].k);drawSkel(lm,a.ok);guide(a);
+  if(a.ok){if(!LIVE.okSince)LIVE.okSince=t;if(!LIVE.counting&&t-LIVE.okSince>700)startCount()}
+  else{LIVE.okSince=0;if(LIVE.counting){cancelCount();say(a.msg);LIVE.lastSay=Date.now()}}
+  if(Date.now()-LIVE.started>20000)anyway(true);
+ };
+ LIVE.raf=requestAnimationFrame(tick);
 }
 function snap(){
- const M=S.m,v=$('#camv');let data='sim';
- try{const w=v.videoWidth,h=v.videoHeight;if(w&&h){const sc=Math.min(1,900/Math.max(w,h)),c=document.createElement('canvas');c.width=Math.round(w*sc);c.height=Math.round(h*sc);const x=c.getContext('2d');if(CAM.facing==='user'){x.translate(c.width,0);x.scale(-1,1)}x.drawImage(v,0,0,c.width,c.height);data=c.toDataURL('image/jpeg',.72)}}catch(e){}
+ const M=S.m,v=$('#camv');let data='sim';cancelAnimationFrame(LIVE.raf);anyway(false);
+ try{const w=v.videoWidth,h=v.videoHeight;if(w&&h){const sc=Math.min(1,960/Math.max(w,h)),c=document.createElement('canvas');c.width=Math.round(w*sc);c.height=Math.round(h*sc);c.getContext('2d').drawImage(v,0,0,c.width,c.height);data=c.toDataURL('image/jpeg',.82)}}catch(e){}
  M.caps[M.step]=data;const f=$('#flash');if(f){f.classList.remove('on');void f.offsetWidth;f.classList.add('on')}
  try{navigator.vibrate&&navigator.vibrate(90)}catch(e){}
  api.call('POST','/v1/measurement-sessions/{id}/captures',POSES[M.step].n+' photo');
- const th=$('#thumbs');if(th)th.innerHTML=thumbsHTML();
- if(M.step<POSES.length-1){M.step++;setTimeout(runPose,900)}
+ const th=$('#thumbs');if(th)th.innerHTML=thumbsHTML();const sk=$('#skel');if(sk)sk.getContext('2d').clearRect(0,0,sk.width,sk.height);
+ if(M.step<POSES.length-1){M.step++;setTimeout(runPose,1100)}
  else{say('All done. Calculating your measurements.');setTimeout(()=>{stopCamera();processScan()},800)}
 }
+
+/* ---- measuring from the two photos ---- */
+function toCanvas(src){return new Promise(res=>{if(!src||src==='sim')return res(null);const im=new Image();im.onload=()=>{const sc=Math.min(1,960/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*sc);c.height=Math.round(im.height*sc);c.getContext('2d').drawImage(im,0,0,c.width,c.height);res(c)};im.onerror=()=>res(null);im.src=src})}
+async function analyzeStill(canvas){
+ if(!canvas||!BODY.ready)return null;
+ for(let i=0;i<40&&LIVE.busy;i++)await new Promise(r=>setTimeout(r,50));
+ await detect(canvas);const r=await detect(canvas);if(!r||!r.poseLandmarks)return null;
+ const W=canvas.width,H=canvas.height;let mask=null,ch=3;
+ if(r.segmentationMask){const c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d');x.drawImage(r.segmentationMask,0,0,W,H);mask=x.getImageData(0,0,W,H).data;
+  let on=0,n=0;for(let i=3;i<mask.length;i+=4*97){n++;if(mask[i]>127)on++}if(on/n>.97)ch=0}
+ return{lm:r.poseLandmarks,mask,ch,W,H};
+}
+function ellipseC(w,d){const a=w/2,b=d/2;return Math.PI*(3*(a+b)-Math.sqrt((3*a+b)*(a+3*b)))}
+function bodyRun(F,y,x0,maxW){
+ if(!F.mask)return null;const{mask,ch,W,H}=F;const yy=Math.round(Math.min(H-1,Math.max(0,y)));const on=x=>x>=0&&x<W&&mask[(yy*W+x)*4+ch]>127;
+ let x=Math.round(x0);if(!on(x)){let f=-1;for(let d=1;d<W*.06;d++){if(on(x+d)){f=x+d;break}if(on(x-d)){f=x-d;break}}if(f<0)return null;x=f}
+ let l=x,r=x;while(l>0&&on(l-1))l--;while(r<W-1&&on(r+1))r++;const w=r-l+1;return maxW&&w>maxW?null:w;
+}
+function avgRun(F,y,x0,maxW){const v=[-4,-2,0,2,4].map(d=>bodyRun(F,y+d,x0,maxW)).filter(Boolean).sort((a,b)=>a-b);return v.length>=3?v[Math.floor(v.length/2)]:null}
+function geom(F,hIn){
+ const P=i=>({x:F.lm[i].x*F.W,y:F.lm[i].y*F.H});
+ const nose=P(0),feet=Math.max(...[27,28,29,30].map(i=>P(i).y)),span=feet-nose.y;
+ const s=hIn/(span/0.935);const shY=(P(11).y+P(12).y)/2,hpY=(P(23).y+P(24).y)/2,T=hpY-shY;
+ const cxAt=f=>{const a=(P(11).x+P(12).x)/2,b=(P(23).x+P(24).x)/2;return a+(b-a)*Math.min(1,Math.max(0,f))};
+ return{P,s,shY,hpY,T,cxAt,nose,feet};
+}
+function measureFrom(front,side,hIn){
+ const out={};const G=geom(front,hIn),{P,s,shY,hpY,T,cxAt}=G;const d=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
+ const shoulderPx=d(P(11),P(12));
+ out.shoulder=shoulderPx*s*1.18;
+ out.arm=Math.max(d(P(11),P(13))+d(P(13),P(15)),d(P(12),P(14))+d(P(14),P(16)))*s*1.06;
+ const heel=Math.max(P(29).y,P(30).y);
+ out.inseam=(heel-hpY)*s*0.9;out.outseam=(heel-hpY+T*.14)*s;out.shirtLen=T*s*1.38;
+ const rows={neck:[P(0).y+(shY-P(0).y)*.74,0],upperChest:[shY+T*.16,.16],chest:[shY+T*.3,.3],waist:[shY+T*.64,.64],abdomen:[shY+T*.8,.8],trouserWaist:[shY+T*.9,.9],hip:[hpY+T*.12,1]};
+ const maxTorso=shoulderPx*1.35;
+ const wF={};for(const[k,[y,f]]of Object.entries(rows))wF[k]=avgRun(front,y,cxAt(f),k==='neck'?shoulderPx*.6:maxTorso);
+ // side depths at the same relative heights
+ const dS={};
+ if(side){const Q=geom(side,hIn),sc=Q.s/s;
+  for(const[k,[,f]]of Object.entries(rows)){const y=k==='neck'?Q.P(0).y+(Q.shY-Q.P(0).y)*.74:k==='hip'?Q.hpY+Q.T*.12:Q.shY+Q.T*f;const v=avgRun(side,y,Q.cxAt(k==='neck'?0:f),shoulderPx*1.2/sc);dS[k]=v?v*sc:null}}
+ const C={neck:1.05,upperChest:1.02,chest:1.03,waist:1.0,abdomen:1.0,trouserWaist:1.0,hip:1.02};
+ for(const k of Object.keys(rows)){const w=wF[k],dd=dS[k];if(!w)continue;out[k]=(dd?ellipseC(w,dd):k==='neck'?Math.PI*w:ellipseC(w,w*.72))*s*C[k]}
+ // legs, measured on the front photo around each leg
+ const leg=(hip,knee,ank)=>{const H1=P(hip),K=P(knee),A=P(ank);const th=avgRun(front,H1.y+(K.y-H1.y)*.2,H1.x+(K.x-H1.x)*.2,shoulderPx*.75),kn=avgRun(front,K.y,K.x,shoulderPx*.5),ca=avgRun(front,K.y+(A.y-K.y)*.33,K.x+(A.x-K.x)*.33,shoulderPx*.5);return{th,kn,ca}};
+ const L1=leg(23,25,27),L2=leg(24,26,28),pick=(a,b)=>a&&b?(a+b)/2:a||b;
+ const th=pick(L1.th,L2.th),kn=pick(L1.kn,L2.kn),ca=pick(L1.ca,L2.ca);
+ if(th)out.thigh=Math.PI*th*s*.98;if(kn)out.knee=Math.PI*kn*s*.94;if(ca)out.calf=Math.PI*ca*s*.97;
+ return out;
+}
+function blendWithPrior(meas,hIn,seed){
+ const m=genM(hIn,seed);let fromPhoto=0;
+ for(const[k]of MEAS){if(k==='height'){m[k]={v:hIn,c:'High',u:false,src:'you'};continue}
+  const v=meas&&meas[k],p=m[k].v,ratio=v?v/p:0;
+  if(v&&ratio>.72&&ratio<1.35){const c=Math.abs(ratio-1)<.12?'High':'Medium';m[k]={v:Math.round(v*10)/10,c,u:c!=='High',src:'photo'};fromPhoto++}
+  else m[k]={v:m[k].v,c:'Low',u:true,src:'estimate'}}
+ return{m,fromPhoto};
+}
+
 function estimateM(hIn,kg,shape,size,seed){
  const m=genM(hIn,seed);const bmi=kg>0?kg/Math.pow(hIn*.0254,2):22.5;
  const f=Math.max(.84,Math.min(1.34,1+(bmi-22.5)*.022));
@@ -1313,13 +1444,20 @@ function estimateM(hIn,kg,shape,size,seed){
  ['neck','calf','wrist'].forEach(k=>{m[k].c='Low';m[k].u=true});
  return m;
 }
-function processScan(){
+async function processScan(){
  const M=S.m;M.stage='processing';M.proc=0;render();
- const t=setInterval(()=>{M.proc++;render();if(M.proc>=5){clearInterval(t);
-  const p=prof(M.profileId)||activeProfile();const h=M.hIn;
-  p.m=genM(Math.round(h*10)/10,Date.now()%100000);p.photos=M.keep;p.updated=new Date().toISOString();
-  api.call('GET','/v1/measurement-sessions/{id}/result','18 measurements');if(!M.keep)api.call('DELETE','/v1/profiles/{id}/captures','auto-delete raw images');
-  S.active=p.id;S.reviewId=p.id;persist();S.m={...S.m,stage:'choose',step:0,caps:[null,null],proc:0};setTimeout(()=>{go('review');toast('Done. Check the highlighted numbers to lock your fit.')},400)}},600);
+ const step=()=>{M.proc++;if(S.view==='measure')render()};
+ const ok=await initBody();step();
+ let meas=null;
+ if(ok){const[fc,sc]=await Promise.all([toCanvas(M.caps[0]),toCanvas(M.caps[1])]);
+  const F=await analyzeStill(fc);step();const Sd=await analyzeStill(sc);step();
+  try{if(F)meas=measureFrom(F,Sd,M.hIn)}catch(e){console.warn('measure failed',e)}}
+ else{step();step()}
+ const p=prof(M.profileId)||activeProfile();const{m,fromPhoto}=blendWithPrior(meas,Math.round(M.hIn*10)/10,Date.now()%100000);step();
+ p.m=m;p.photos=M.keep;p.updated=new Date().toISOString();
+ api.call('GET','/v1/measurement-sessions/{id}/result',fromPhoto+' of 17 measured from photos');if(!M.keep)api.call('DELETE','/v1/profiles/{id}/captures','auto-delete raw images');
+ step();S.active=p.id;S.reviewId=p.id;persist();S.m={...S.m,stage:'choose',step:0,caps:[null,null],proc:0};
+ setTimeout(()=>{go('review');toast(fromPhoto>=10?`${fromPhoto} measurements read from your photos. Check the highlighted ones.`:'We couldn’t read the photos clearly, so some numbers are estimates. Check the highlighted ones.')},300);
 }
 
 document.addEventListener('click',e=>{
@@ -1351,7 +1489,7 @@ document.addEventListener('click',e=>{
   case'to-measure':{const p=activeProfile();S.instructions=$('#instr')?.value||S.instructions;go(p&&p.m?'review':'measure');if(p&&p.m)toast('Using '+p.name+'. Review or retake below.');break}
   case'review-active':S.reviewId=activeProfile().id;go('review');break;
   case'consent2':S.m.keep=a.checked;break;
-  case'm-pick':S.m.stage=a.dataset.val;S.m.profileId=S.m.profileId||S.active;if(a.dataset.val==='upload')S.m.caps=[null,null];prefillHeight();if(S.view!=='measure')go('measure');else{render();window.scrollTo({top:0})}break;
+  case'm-pick':S.m.stage=a.dataset.val;if(a.dataset.val==='scan'||a.dataset.val==='upload')initBody();S.m.profileId=S.m.profileId||S.active;if(a.dataset.val==='upload')S.m.caps=[null,null];prefillHeight();if(S.view!=='measure')go('measure');else{render();window.scrollTo({top:0})}break;
   case'm-shape':S.m.kg=$('#q-kg')?.value||S.m.kg;readHeight();S.m.shape=a.dataset.val;render();break;
   case'm-size':S.m.kg=$('#q-kg')?.value||S.m.kg;readHeight();S.m.size=a.dataset.val;render();break;
   case'm-quick-go':{if(!readWho())break;const h=readHeight();if(!heightOk(h))break;const kg=parseFloat($('#q-kg').value);if(!(kg>=25&&kg<=220)){toast('Please enter your weight in kg');break}
@@ -1360,6 +1498,7 @@ document.addEventListener('click',e=>{
   case'm-upload-go':{if(!readWho())break;const h=readHeight();if(!heightOk(h))break;S.m.hIn=h;processScan();break}
   case'm-pause':{const M=S.m;M.paused=!M.paused;a.textContent=M.paused?'Resume':'Pause';const st=$('#livestat');if(st)st.textContent=M.paused?'PAUSED':'GET INTO POSITION';if(!M.paused)runPose();break}
   case'm-redo':if(CAM.stream)runPose();break;
+  case'm-anyway':cancelCount();snap();break;
   case'm-switch':CAM.facing=CAM.facing==='user'?'environment':'user';startCamera();toast(CAM.facing==='user'?'Front camera':'Back camera: ask someone to hold the phone');break;
   case'm-voice':S.m.voice=!S.m.voice;a.textContent=S.m.voice?'Voice on':'Voice off';if(!S.m.voice)try{speechSynthesis.cancel()}catch(e){}break;
   case'm-cancel':stopCamera();S.m.stage='scan';S.m.caps=[null,null];render();break;
@@ -1368,7 +1507,7 @@ document.addEventListener('click',e=>{
   case'm-back':S.m.stage='choose';render();break;
   case'm-go':{if(!readWho())break;const h=readHeight();if(!heightOk(h))break;S.m.hIn=h;S.m.stage='live';S.m.step=0;S.m.caps=[null,null];persist();render();window.scrollTo({top:0});
    try{speechSynthesis.speak(new SpeechSynthesisUtterance(''))}catch(e){}break}
-  case'rescan':S.m={...S.m,stage:'scan',profileId:(prof(S.reviewId)||activeProfile()).id};prefillHeight();go('measure');break;
+  case'rescan':initBody();S.m={...S.m,stage:'scan',profileId:(prof(S.reviewId)||activeProfile()).id};prefillHeight();go('measure');break;
   case'confirm-meas':{const p=prof(S.reviewId)||activeProfile();S.active=p.id;api.call('PATCH','/v1/profiles/'+p.id,'measurements confirmed');persist();go('preview');toast(locked(p)?p.name+' is Fit Locked. 100% Fit Guarantee applies.':'Continuing at '+fitScore(p).score+'%. Standard alteration policy applies.');break}
   case'del-photos':{const p=prof(a.dataset.id);p.photos=false;api.call('DELETE','/v1/profiles/'+p.id+'/captures','user request');persist();render();toast('Capture photos deleted');break}
   case'angle':stopSpin();setAngle(+a.dataset.val);render();break;
